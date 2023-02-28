@@ -1,7 +1,6 @@
 import os
 import ctypes as c
 
-
 def auto_upload(replays_path):
 	data_path = f"{os.getcwd()}/data.dat".encode()
 	core = c.CDLL(f"{os.getcwd()}/core.so")
