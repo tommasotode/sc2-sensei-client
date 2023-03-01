@@ -1,0 +1,23 @@
+commit 6baf54834e5169ee0d973aa7732bfc20ff5c1d8e (HEAD, tag: v0.7.1, origin/release-0.7, origin/HEAD, release-0.7)
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2022-09-18
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-09-18
+
+    Update AUTHORS
+
+commit 1ee3fad99d212ebc97bf55ae7446e1465dad4224
+Author:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+AuthorDate: 2022-09-18
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-09-18
+
+    Bump package and library versions
+
+commit ea0b63a2633cd6fb42e555c6cef27d72e4c84d8c
+Author:     Alexis La Goutte <alexis.lagoutte@gmail.com>
+AuthorDate: 2022-08-24
+Commit:     Tatsuhiro Tsujikawa <tatsuhiro.t@gmail.com>
+CommitDate: 2022-09-18
+
+    nghttp3_ringbuf: fix __popcnt with ARM (32bits)
