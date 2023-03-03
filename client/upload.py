@@ -15,7 +15,9 @@ def auto_upload(replays_path):
 	if new_date > old_date:
 		print("Directory has been modified\n")
 		core.upload_all_new(c.c_longlong(old_date), c.c_char_p(replays))
+		print("uploaded")
 		core.wrt_file_date(c.c_char_p(data_path), c.c_longlong(new_date))
+		print("written")
 	elif new_date == old_date:
 		print("Ok")
 	else:

@@ -75,6 +75,6 @@ class Client(ct.CTk):
 	#	----	AUTOUPLOAD	----	#
 	def main(self):
 		# TEMP
-		replays_path = "C:/Users/tomma/sc2-sensei/upload_client/ReplayTest"
+		replays_path = f"{getcwd()}/ReplayTest"
 		auto_upload(replays_path)
 		self.after(5000, self.main)

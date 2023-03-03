@@ -113,9 +113,12 @@ check upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 	while((entry = readdir(rep_dir)))
 	{
 		char rep_path[MAX_PATH];
-		strcpy_s(rep_path, MAX_PATH, dir_rt);
-		strcat_s(rep_path, MAX_PATH, dir_rt);
-		strcat_s(rep_path, MAX_PATH, entry->d_name);
+		// strcpy_s(rep_path, MAX_PATH, dir_rt);
+		// strcat_s(rep_path, MAX_PATH, "\\");
+		// strcat_s(rep_path, MAX_PATH, entry->d_name);
+		strcpy(rep_path, dir_rt);
+		strcat(rep_path, "\\");
+		strcat(rep_path, entry->d_name);
 		
 		FILE *replay = fopen(rep_path, "rb");
 		fstat(fileno(replay), &info);
