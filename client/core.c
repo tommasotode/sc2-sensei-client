@@ -1,5 +1,6 @@
 #include "core.h"
 
+//	Use this to check the files before using other functions
 check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH])
 {
 	check state = SUCCESS;
@@ -60,9 +61,9 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 }
 
 // Warning: Do not use this function alone (doesn't handle the files)
-check upload_replay(FILE *replay, char name[MAX_PATH])
+Replay upload_replay(FILE *replay, char name[MAX_PATH])
 {
-	check state = SUCCESS;
+	Replay current;
 	struct stat info;
 	fstat(fileno(replay), &info);
 
@@ -75,7 +76,8 @@ check upload_replay(FILE *replay, char name[MAX_PATH])
 	if(!handle)
 	{
 		perror("[!] Unable to initialize curl, aborting upload");
-		return FAILURE;
+		current.state = FAILURE;
+		return current;
 	}
 	// Setting URL to upload to and how
 	curl_easy_setopt(handle, CURLOPT_URL, "https://sc2sensei.top/auto_upload");
@@ -96,14 +98,21 @@ check upload_replay(FILE *replay, char name[MAX_PATH])
 	if(curl_easy_perform(handle) != CURLE_OK)
 	{
 		printf("\n[!] Unable to upload [%s]\n", replay);
-		state = FAILURE;
+		current.state = FAILURE;
 	}
 	curl_slist_free_all(list);
 	curl_easy_cleanup(handle);
 
-	return state;
+
+	time_t raw_time;
+	time(&raw_time);
+	struct tm * local_time = localtime(&raw_time);
+	strftime(current.upload_date, MAX_PATH, "%x - %I:%M%p", local_time);
+
+	return current;
 }
 
+//	TODO
 check upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 {
 	check state = SUCCESS;
@@ -132,27 +141,33 @@ check upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 	return state;
 }
 
+//						Debug mode								//
 check debug_mode()
 {
-	//						Debug mode								//
 	short mode;
 	printf("DEBUG MODE\n\n");
 	printf("0 - Quit\n1 - Upload single replay\n");
-	scanf("%d", &mode);
-	
+	scanf("%d", &mode);	
 	if (mode == 1)
 	{
 		char path[MAX_PATH];
 		char name[MAX_PATH] = "debug_replay";
 		struct stat info;
 		FILE *rep;
+		printf("Insert the replay path\n");
 		scanf("%s", path);
 		if(!(rep = fopen(path, "rb")))
+		{
+			perror("Failed to open the replay");
+			fclose(rep);
 			return FAILURE;
+		}
 		if(upload_replay(rep, name) == FAILURE)
+		{
+			perror("Failed to upload the replay");
 			return FAILURE;
+		}
 		fclose(rep);
-	}
-	
+	}	
 	return SUCCESS;
 }
