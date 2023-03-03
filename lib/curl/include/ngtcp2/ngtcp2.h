@@ -267,12 +267,11 @@ typedef struct ngtcp2_mem {
 /**
  * @macro
  *
- * :macro:`NGTCP2_PROTO_VER_V2_DRAFT` is the provisional version
- * number for QUIC version 2 draft.
+ * :macro:`NGTCP2_PROTO_VER_V2` is the QUIC version 2.
  *
  * https://quicwg.org/quic-v2/draft-ietf-quic-v2.html
  */
-#define NGTCP2_PROTO_VER_V2_DRAFT ((uint32_t)0x709a50c4u)
+#define NGTCP2_PROTO_VER_V2 ((uint32_t)0x6b3343cfu)
 
 /**
  * @macro
@@ -412,24 +411,23 @@ typedef struct ngtcp2_mem {
 /**
  * @macro
  *
- * :macro:`NGTCP2_RETRY_KEY_V2_DRAFT` is an encryption key to create
- * integrity tag of Retry packet.  It is used for QUIC v2 draft.
+ * :macro:`NGTCP2_RETRY_KEY_V2` is an encryption key to create
+ * integrity tag of Retry packet.  It is used for QUIC v2.
  *
  * https://quicwg.org/quic-v2/draft-ietf-quic-v2.html
  */
-#define NGTCP2_RETRY_KEY_V2_DRAFT                                              \
-  "\xba\x85\x8d\xc7\xb4\x3d\xe5\xdb\xf8\x76\x17\xff\x4a\xb2\x53\xdb"
+#define NGTCP2_RETRY_KEY_V2                                                    \
+  "\x8f\xb4\xb0\x1b\x56\xac\x48\xe2\x60\xfb\xcb\xce\xad\x7c\xcc\x92"
 
 /**
  * @macro
  *
- * :macro:`NGTCP2_RETRY_NONCE_V2_DRAFT` is nonce used when generating
- * integrity tag of Retry packet.  It is used for QUIC v2 draft.
+ * :macro:`NGTCP2_RETRY_NONCE_V2` is nonce used when generating
+ * integrity tag of Retry packet.  It is used for QUIC v2.
  *
  * https://quicwg.org/quic-v2/draft-ietf-quic-v2.html
  */
-#define NGTCP2_RETRY_NONCE_V2_DRAFT                                            \
-  "\x14\x1b\x99\xc2\x39\xb0\x3e\x78\x5d\x6a\x2e\x9f"
+#define NGTCP2_RETRY_NONCE_V2 "\xd8\x69\x69\xbc\x2d\x7c\x6d\x99\x90\xef\xb0\x4a"
 
 /**
  * @macro
@@ -1061,12 +1059,12 @@ typedef enum ngtcp2_pkt_type {
 /**
  * @macro
  *
- * :macro:`NGTCP2_VERSION_NEGOTIATION_ERROR_DRAFT` is QUIC transport
- * error code ``VERSION_NEGOTIATION_ERROR``.
+ * :macro:`NGTCP2_VERSION_NEGOTIATION_ERROR` is QUIC transport error
+ * code ``VERSION_NEGOTIATION_ERROR``.
  *
- * https://quicwg.org/quic-v2/draft-ietf-quic-v2.html
+ * https://datatracker.ietf.org/doc/html/draft-ietf-quic-version-negotiation-14
  */
-#define NGTCP2_VERSION_NEGOTIATION_ERROR_DRAFT 0x53f8u
+#define NGTCP2_VERSION_NEGOTIATION_ERROR 0x11
 
 /**
  * @enum
@@ -1096,6 +1094,7 @@ typedef enum ngtcp2_path_validation_result {
  * @typedef
  *
  * :type:`ngtcp2_tstamp` is a timestamp with nanosecond resolution.
+ * ``UINT64_MAX`` is an invalid value.
  */
 typedef uint64_t ngtcp2_tstamp;
 
@@ -1103,7 +1102,7 @@ typedef uint64_t ngtcp2_tstamp;
  * @typedef
  *
  * :type:`ngtcp2_duration` is a period of time in nanosecond
- * resolution.
+ * resolution.  ``UINT64_MAX`` is an invalid value.
  */
 typedef uint64_t ngtcp2_duration;
 
@@ -1181,7 +1180,11 @@ typedef struct ngtcp2_pkt_hd {
    * :member:`token` contains token for Initial
    * packet.
    */
-  ngtcp2_vec token;
+  const uint8_t *token;
+  /**
+   * :member:`tokenlen` is the length of :member:`token`.
+   */
+  size_t tokenlen;
   /**
    * :member:`pkt_numlen` is the number of bytes spent to encode
    * :member:`pkt_num`.
@@ -1305,6 +1308,115 @@ typedef enum ngtcp2_transport_params_type {
  */
 #define NGTCP2_TLSEXT_QUIC_TRANSPORT_PARAMETERS_DRAFT 0xffa5u
 
+#ifdef NGTCP2_USE_GENERIC_SOCKADDR
+typedef struct ngtcp2_sockaddr {
+  uint16_t sa_family;
+  uint8_t sa_data[14];
+} ngtcp2_sockaddr;
+
+typedef struct ngtcp2_in_addr {
+  uint32_t s_addr;
+} ngtcp2_in_addr;
+
+typedef struct ngtcp2_sockaddr_in {
+  uint16_t sin_family;
+  uint16_t sin_port;
+  ngtcp2_in_addr sin_addr;
+  uint8_t sin_zero[8];
+} ngtcp2_sockaddr_in;
+
+#  define NGTCP2_SS_MAXSIZE 128
+#  define NGTCP2_SS_ALIGNSIZE (sizeof(uint64_t))
+#  define NGTCP2_SS_PAD1SIZE (NGTCP2_SS_ALIGNSIZE - sizeof(uint16_t))
+#  define NGTCP2_SS_PAD2SIZE                                                   \
+    (NGTCP2_SS_MAXSIZE -                                                       \
+     (sizeof(uint16_t) + NGTCP2_SS_PAD1SIZE + NGTCP2_SS_ALIGNSIZE))
+
+typedef struct ngtcp2_sockaddr_storage {
+  uint16_t ss_family;
+  uint8_t _ss_pad1[NGTCP2_SS_PAD1SIZE];
+  uint64_t _ss_align;
+  uint8_t _ss_pad2[NGTCP2_SS_PAD2SIZE];
+} ngtcp2_sockaddr_storage;
+
+#  undef NGTCP2_SS_PAD2SIZE
+#  undef NGTCP2_SS_PAD1SIZE
+#  undef NGTCP2_SS_ALIGNSIZE
+#  undef NGTCP2_SS_MAXSIZE
+
+typedef uint32_t ngtcp2_socklen;
+#else
+/**
+ * @typedef
+ *
+ * :type:`ngtcp2_sockaddr` is typedefed to struct sockaddr.  If
+ * :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is defined, it is typedefed to
+ * the generic struct sockaddr defined in ngtcp2.h.
+ */
+typedef struct sockaddr ngtcp2_sockaddr;
+/**
+ * @typedef
+ *
+ * :type:`ngtcp2_sockaddr_storage` is typedefed to struct
+ * sockaddr_storage.  If :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is
+ * defined, it is typedefed to the generic struct sockaddr_storage
+ * defined in ngtcp2.h.
+ */
+typedef struct sockaddr_storage ngtcp2_sockaddr_storage;
+/**
+ * @typedef
+ *
+ * :type:`ngtcp2_sockaddr_in` is typedefed to struct sockaddr_in.  If
+ * :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is defined, it is typedefed to
+ * the generic struct sockaddr_in defined in ngtcp2.h.
+ */
+typedef struct sockaddr_in ngtcp2_sockaddr_in;
+/**
+ * @typedef
+ *
+ * :type:`ngtcp2_socklen` is typedefed to socklen_t.  If
+ * :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is defined, it is typedefed to
+ * uint32_t.
+ */
+typedef socklen_t ngtcp2_socklen;
+#endif
+
+#if defined(NGTCP2_USE_GENERIC_SOCKADDR) ||                                    \
+    defined(NGTCP2_USE_GENERIC_IPV6_SOCKADDR)
+typedef struct ngtcp2_in6_addr {
+  uint8_t in6_addr[16];
+} ngtcp2_in6_addr;
+
+typedef struct ngtcp2_sockaddr_in6 {
+  uint16_t sin6_family;
+  uint16_t sin6_port;
+  uint32_t sin6_flowinfo;
+  ngtcp2_in6_addr sin6_addr;
+  uint32_t sin6_scope_id;
+} ngtcp2_sockaddr_in6;
+#else
+/**
+ * @typedef
+ *
+ * :type:`ngtcp2_sockaddr_in6` is typedefed to struct sockaddr_in6.
+ * If :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is defined, it is typedefed
+ * to the generic struct sockaddr_in6 defined in ngtcp2.h.
+ */
+typedef struct sockaddr_in6 ngtcp2_sockaddr_in6;
+#endif
+
+/**
+ * @struct
+ *
+ * :type:`ngtcp2_sockaddr_union` conveniently includes all supported
+ * address types.
+ */
+typedef union ngtcp2_sockaddr_union {
+  ngtcp2_sockaddr sa;
+  ngtcp2_sockaddr_in in;
+  ngtcp2_sockaddr_in6 in6;
+} ngtcp2_sockaddr_union;
+
 /**
  * @struct
  *
@@ -1317,29 +1429,21 @@ typedef struct ngtcp2_preferred_addr {
    */
   ngtcp2_cid cid;
   /**
-   * :member:`ipv4_port` is a port of IPv4 address.
+   * :member:`ipv4` contains IPv4 address and port.
    */
-  uint16_t ipv4_port;
+  ngtcp2_sockaddr_in ipv4;
   /**
-   * :member:`ipv6_port` is a port of IPv6 address.
+   * :member:`ipv6` contains IPv4 address and port.
    */
-  uint16_t ipv6_port;
+  ngtcp2_sockaddr_in6 ipv6;
   /**
-   * :member:`ipv4_addr` contains IPv4 address in network byte order.
-   */
-  uint8_t ipv4_addr[4];
-  /**
-   * :member:`ipv6_addr` contains IPv6 address in network byte order.
-   */
-  uint8_t ipv6_addr[16];
-  /**
-   * :member:`ipv4_present` indicates that :member:`ipv4_addr` and
-   * :member:`ipv4_port` contain IPv4 address and port respectively.
+   * :member:`ipv4_present` indicates that :member:`ipv4` contains
+   * IPv4 address and port.
    */
   uint8_t ipv4_present;
   /**
-   * :member:`ipv6_present` indicates that :member:`ipv6_addr` and
-   * :member:`ipv6_port` contain IPv6 address and port respectively.
+   * :member:`ipv6_present` indicates that :member:`ipv6` contains
+   * IPv6 address and port.
    */
   uint8_t ipv6_present;
   /**
@@ -1360,15 +1464,17 @@ typedef struct ngtcp2_version_info {
    */
   uint32_t chosen_version;
   /**
-   * :member:`other_versions` points the wire image of other_versions
-   * field.  The each version is therefore in network byte order.
+   * :member:`available_versions` points the wire image of
+   * available_versions field.  The each version is therefore in
+   * network byte order.
    */
-  uint8_t *other_versions;
+  const uint8_t *available_versions;
   /**
-   * :member:`other_versionslen` is the number of bytes pointed by
-   * :member:`other_versions`, not the number of versions included.
+   * :member:`available_versionslen` is the number of bytes pointed by
+   * :member:`available_versions`, not the number of versions
+   * included.
    */
-  size_t other_versionslen;
+  size_t available_versionslen;
 } ngtcp2_version_info;
 
 #define NGTCP2_TRANSPORT_PARAMS_VERSION_V1 1
@@ -1805,7 +1911,11 @@ typedef struct ngtcp2_settings {
    * `ngtcp2_conn_server_new` and `ngtcp2_conn_client_new` make a copy
    * of token.
    */
-  ngtcp2_vec token;
+  const uint8_t *token;
+  /**
+   * :member:`tokenlen` is the length of :member:`token`.
+   */
+  size_t tokenlen;
   /**
    * :member:`rand_ctx` is an optional random number generator to be
    * passed to :type:`ngtcp2_rand` callback.
@@ -1833,9 +1943,8 @@ typedef struct ngtcp2_settings {
    */
   uint64_t max_stream_window;
   /**
-   * :member:`ack_thresh` is the maximum number of unacknowledged
-   * packets before sending acknowledgement.  It triggers the
-   * immediate acknowledgement.
+   * :member:`ack_thresh` is the minimum number of the received ACK
+   * eliciting packets that triggers the immediate acknowledgement.
    */
   size_t ack_thresh;
   /**
@@ -1864,10 +1973,13 @@ typedef struct ngtcp2_settings {
    * of preference.
    *
    * On compatible version negotiation, server will negotiate one of
-   * those versions contained in this array if a client initially
-   * chooses a less preferred version.  This version set corresponds
-   * to Offered Versions in QUIC Version Negotiation draft, and it should
-   * be sent in Version Negotiation packet.
+   * those versions contained in this array if there is some overlap
+   * between these versions and the versions offered by the client.
+   * If there is no overlap, but the client chosen version is
+   * supported by the library, the server chooses the client chosen
+   * version as the negotiated version.  This version set corresponds
+   * to Offered Versions in QUIC Version Negotiation draft, and it
+   * should be included in Version Negotiation packet.
    *
    * Client uses this field and :member:`original_version` to prevent
    * version downgrade attack if it reacted upon Version Negotiation
@@ -1875,7 +1987,7 @@ typedef struct ngtcp2_settings {
    * |client_chosen_version| passed to `ngtcp2_conn_client_new` unless
    * |client_chosen_version| is a reserved version.
    */
-  uint32_t *preferred_versions;
+  const uint32_t *preferred_versions;
   /**
    * :member:`preferred_versionslen` is the number of versions that
    * are contained in the array pointed by
@@ -1883,9 +1995,10 @@ typedef struct ngtcp2_settings {
    */
   size_t preferred_versionslen;
   /**
-   * :member:`other_versions` is the array of versions that are set in
-   * :member:`other_versions <ngtcp2_version_info.other_versions>`
-   * field of outgoing version_information QUIC transport parameter.
+   * :member:`available_versions` is the array of versions that are
+   * going to be set in :member:`available_versions
+   * <ngtcp2_version_info.available_versions>` field of outgoing
+   * version_information QUIC transport parameter.
    *
    * For server, this corresponds to Fully-Deployed Versions in QUIC
    * Version Negotiation draft.  If this field is set not, it is set
@@ -1901,12 +2014,13 @@ typedef struct ngtcp2_settings {
    * `ngtcp2_conn_client_new` will be set in this field internally
    * unless |client_chosen_version| is a reserved version.
    */
-  uint32_t *other_versions;
+  const uint32_t *available_versions;
   /**
-   * :member:`other_versionslen` is the number of versions that are
-   * contained in the array pointed by :member:`other_versions`.
+   * :member:`available_versionslen` is the number of versions that
+   * are contained in the array pointed by
+   * :member:`available_versions`.
    */
-  size_t other_versionslen;
+  size_t available_versionslen;
   /**
    * :member:`original_version` is the original version that client
    * initially used to make a connection attempt.  If it is set, and
@@ -1921,89 +2035,6 @@ typedef struct ngtcp2_settings {
    */
   int no_pmtud;
 } ngtcp2_settings;
-
-#ifdef NGTCP2_USE_GENERIC_SOCKADDR
-typedef struct ngtcp2_sockaddr {
-  uint16_t sa_family;
-  uint8_t sa_data[14];
-} ngtcp2_sockaddr;
-
-typedef struct ngtcp2_in_addr {
-  uint32_t s_addr;
-} ngtcp2_in_addr;
-
-typedef struct ngtcp2_sockaddr_in {
-  uint16_t sin_family;
-  uint16_t sin_port;
-  ngtcp2_in_addr sin_addr;
-  uint8_t sin_zero[8];
-} ngtcp2_sockaddr_in;
-
-#  define NGTCP2_SS_MAXSIZE 128
-#  define NGTCP2_SS_ALIGNSIZE (sizeof(uint64_t))
-#  define NGTCP2_SS_PAD1SIZE (NGTCP2_SS_ALIGNSIZE - sizeof(uint16_t))
-#  define NGTCP2_SS_PAD2SIZE                                                   \
-    (NGTCP2_SS_MAXSIZE -                                                       \
-     (sizeof(uint16_t) + NGTCP2_SS_PAD1SIZE + NGTCP2_SS_ALIGNSIZE))
-
-typedef struct ngtcp2_sockaddr_storage {
-  uint16_t ss_family;
-  uint8_t _ss_pad1[NGTCP2_SS_PAD1SIZE];
-  uint64_t _ss_align;
-  uint8_t _ss_pad2[NGTCP2_SS_PAD2SIZE];
-} ngtcp2_sockaddr_storage;
-
-#  undef NGTCP2_SS_PAD2SIZE
-#  undef NGTCP2_SS_PAD1SIZE
-#  undef NGTCP2_SS_ALIGNSIZE
-#  undef NGTCP2_SS_MAXSIZE
-
-typedef uint32_t ngtcp2_socklen;
-#else
-/**
- * @typedef
- *
- * :type:`ngtcp2_sockaddr` is typedefed to struct sockaddr.  If
- * :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is defined, it is typedefed to
- * the generic struct sockaddr defined in ngtcp2.h.
- */
-typedef struct sockaddr ngtcp2_sockaddr;
-/**
- * @typedef
- *
- * :type:`ngtcp2_sockaddr_storage` is typedefed to struct
- * sockaddr_storage.  If :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is
- * defined, it is typedefed to the generic struct sockaddr_storage
- * defined in ngtcp2.h.
- */
-typedef struct sockaddr_storage ngtcp2_sockaddr_storage;
-typedef struct sockaddr_in ngtcp2_sockaddr_in;
-/**
- * @typedef
- *
- * :type:`ngtcp2_socklen` is typedefed to socklen_t.  If
- * :macro:`NGTCP2_USE_GENERIC_SOCKADDR` is defined, it is typedefed to
- * uint32_t.
- */
-typedef socklen_t ngtcp2_socklen;
-#endif
-
-#if defined(NGTCP2_USE_GENERIC_SOCKADDR) ||                                    \
-    defined(NGTCP2_USE_GENERIC_IPV6_SOCKADDR)
-typedef struct ngtcp2_in6_addr {
-  uint8_t in6_addr[16];
-} ngtcp2_in6_addr;
-
-typedef struct ngtcp2_sockaddr_in6 {
-  uint16_t sin6_family;
-  uint16_t sin6_port;
-  uint32_t sin6_flowinfo;
-  ngtcp2_in6_addr sin6_addr;
-  uint32_t sin6_scope_id;
-} ngtcp2_sockaddr_in6;
-#else
-typedef struct sockaddr_in6 ngtcp2_sockaddr_in6;
-#endif
 
 /**
  * @struct
@@ -2068,11 +2099,11 @@ typedef struct ngtcp2_path_storage {
   /**
    * :member:`local_addrbuf` is a buffer to store local address.
    */
-  ngtcp2_sockaddr_storage local_addrbuf;
+  ngtcp2_sockaddr_union local_addrbuf;
   /**
    * :member:`remote_addrbuf` is a buffer to store remote address.
    */
-  ngtcp2_sockaddr_storage remote_addrbuf;
+  ngtcp2_sockaddr_union remote_addrbuf;
 } ngtcp2_path_storage;
 
 /**
@@ -2222,8 +2253,8 @@ NGTCP2_EXTERN ngtcp2_ssize ngtcp2_encode_transport_params_versioned(
  * The following fields may point to somewhere inside the buffer
  * pointed by |data| of length |datalen|:
  *
- * - :member:`ngtcp2_transport_params.version_info.other_versions
- *   <ngtcp2_version_info.other_versions>`
+ * - :member:`ngtcp2_transport_params.version_info.available_versions
+ *   <ngtcp2_version_info.available_versions>`
  *
  * This function returns 0 if it succeeds, or one of the following
  * negative error codes:
@@ -3148,14 +3179,14 @@ typedef int (*ngtcp2_connection_id_status)(ngtcp2_conn *conn, int type,
  * :type:`ngtcp2_recv_new_token` is a callback function which is
  * called when new token is received from server.
  *
- * |token| is the received token.
+ * |token| is the received token of length |tokenlen| bytes long.
  *
  * The callback function must return 0 if it succeeds.  Returning
  * :macro:`NGTCP2_ERR_CALLBACK_FAILURE` makes the library call return
  * immediately.
  */
-typedef int (*ngtcp2_recv_new_token)(ngtcp2_conn *conn, const ngtcp2_vec *token,
-                                     void *user_data);
+typedef int (*ngtcp2_recv_new_token)(ngtcp2_conn *conn, const uint8_t *token,
+                                     size_t tokenlen, void *user_data);
 
 /**
  * @functypedef
@@ -4100,7 +4131,8 @@ NGTCP2_EXTERN void ngtcp2_conn_set_keep_alive_timeout(ngtcp2_conn *conn,
 /**
  * @function
  *
- * `ngtcp2_conn_get_expiry` returns the next expiry time.
+ * `ngtcp2_conn_get_expiry` returns the next expiry time.  It returns
+ * ``UINT64_MAX`` if there is no next expiry.
  *
  * Call `ngtcp2_conn_handle_expiry()` and `ngtcp2_conn_write_pkt` (or
  * `ngtcp2_conn_writev_stream`) if expiry time is passed.
@@ -4466,31 +4498,48 @@ NGTCP2_EXTERN ngtcp2_ssize ngtcp2_conn_write_stream_versioned(
  * - The function returns the written length of packet just like
  *   without :macro:`NGTCP2_WRITE_STREAM_FLAG_MORE`.  This is because
  *   packet is nearly full and the library decided to make a complete
- *   packet.  |*pdatalen| might be -1 or >= 0.
+ *   packet.  |*pdatalen| might be -1 or >= 0.  It may return 0 which
+ *   indicates that no packet transmission is possible at the moment
+ *   for some reason.
  *
  * - The function returns :macro:`NGTCP2_ERR_WRITE_MORE`.  In this
- *   case, |*pdatalen| >= 0 is asserted.  This indicates that
- *   application can call this function with different stream data (or
+ *   case, |*pdatalen| >= 0 is asserted.  It indicates that
+ *   application can still call this function with different stream
+ *   data (or `ngtcp2_conn_writev_datagram` if it has data to send in
+ *   unreliable datagram) to pack them into the same packet.
+ *   Application has to specify the same |conn|, |path|, |pi|, |dest|,
+ *   |destlen|, and |ts| parameters, otherwise the behaviour is
+ *   undefined.  The application can change |flags|.
+ *
+ * - The function returns one of the following negative error codes:
+ *   :macro:`NGTCP2_ERR_STREAM_DATA_BLOCKED`,
+ *   :macro:`NGTCP2_ERR_STREAM_NOT_FOUND`,
+ *   :macro:`NGTCP2_ERR_STREAM_SHUT_WR`.  In this case, |*pdatalen| ==
+ *   -1 is asserted.  Application can still write the stream data of
+ *   the other streams by calling this function (or
  *   `ngtcp2_conn_writev_datagram` if it has data to send in
  *   unreliable datagram) to pack them into the same packet.
  *   Application has to specify the same |conn|, |path|, |pi|, |dest|,
  *   |destlen|, and |ts| parameters, otherwise the behaviour is
  *   undefined.  The application can change |flags|.
  *
- * - The function returns :macro:`NGTCP2_ERR_STREAM_DATA_BLOCKED` which
- *   indicates that stream is blocked because of flow control.
+ * - The other negative error codes might be returned just like
+ *   without :macro:`NGTCP2_WRITE_STREAM_FLAG_MORE`.  These errors
+ *   should be treated as a connection error.
  *
- * - The other error might be returned just like without
- *   :macro:`NGTCP2_WRITE_STREAM_FLAG_MORE`.
- *
- * When application sees :macro:`NGTCP2_ERR_WRITE_MORE`, it must not
- * call other ngtcp2 API functions (application can still call
- * `ngtcp2_conn_write_connection_close` to handle error from this
- * function).  Just keep calling `ngtcp2_conn_writev_stream`,
- * `ngtcp2_conn_write_pkt`, or `ngtcp2_conn_writev_datagram` until it
- * returns a positive number (which indicates a complete packet is
- * ready).  If there is no stream data to include, call this function
- * with |stream_id| as -1 to stop coalescing and write a packet.
+ * When application uses :macro:`NGTCP2_WRITE_STREAM_FLAG_MORE` at
+ * least once, it must not call other ngtcp2 API functions
+ * (application can still call `ngtcp2_conn_write_connection_close` to
+ * handle error from this function), just keep calling this function
+ * (or `ngtcp2_conn_write_pkt`, or `ngtcp2_conn_writev_datagram`)
+ * until it returns 0, a positive number (which indicates a complete
+ * packet is ready), or the error codes other than
+ * :macro:`NGTCP2_ERR_WRITE_MORE`,
+ * :macro:`NGTCP2_ERR_STREAM_DATA_BLOCKED`,
+ * :macro:`NGTCP2_ERR_STREAM_NOT_FOUND`, and
+ * :macro:`NGTCP2_ERR_STREAM_SHUT_WR`.  If there is no stream data to
+ * include, call this function with |stream_id| as -1 to stop
+ * coalescing and write a packet.
  *
  * This function returns 0 if it cannot write any frame because buffer
  * is too small, or packet is congestion limited.  Application should
@@ -5217,7 +5266,7 @@ typedef struct ngtcp2_connection_close_error {
    * received from a remote endpoint, it is truncated to at most 1024
    * bytes.
    */
-  uint8_t *reason;
+  const uint8_t *reason;
   /**
    * :member:`reasonlen` is the length of data pointed by
    * :member:`reason`.

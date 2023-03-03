@@ -723,6 +723,16 @@ NGHTTP3_EXTERN void nghttp3_buf_reset(nghttp3_buf *buf);
 #define NGHTTP3_NV_FLAG_NO_COPY_VALUE 0x04u
 
 /**
+ * @macro
+ *
+ * :macro:`NGHTTP3_NV_FLAG_TRY_INDEX` gives a hint to QPACK encoder to
+ * index a header field which is not indexed by default.  This is just
+ * a hint, and QPACK encoder might not encode the field in various
+ * reasons.
+ */
+#define NGHTTP3_NV_FLAG_TRY_INDEX 0x08u
+
+/**
  * @struct
  *
  * :type:`nghttp3_nv` is the name/value pair, which mainly used to
@@ -1071,8 +1081,8 @@ typedef struct nghttp3_qpack_nv {
   nghttp3_rcbuf *value;
   /**
    * :member:`token` is :type:`nghttp3_qpack_token` value of
-   *  :member:`name`.  It could be -1 if we have no token for that
-   *  header field name.
+   * :member:`name`.  It could be -1 if we have no token for that
+   * header field name.
    */
   int32_t token;
   /**
@@ -1924,9 +1934,8 @@ typedef struct nghttp3_settings {
   size_t qpack_blocked_streams;
   /**
    * :member:`enable_connect_protocol`, if set to nonzero, enables
-   * Extended CONNECT Method (see
-   * https://www.ietf.org/archive/id/draft-ietf-httpbis-h3-websockets-00.html).
-   * Client ignores this field.
+   * Extended CONNECT Method (see :rfc:`9220`).  Client ignores this
+   * field.
    */
   int enable_connect_protocol;
 } nghttp3_settings;
@@ -2359,7 +2368,7 @@ NGHTTP3_EXTERN int nghttp3_conn_submit_shutdown_notice(nghttp3_conn *conn);
  * called after `nghttp3_conn_submit_shutdown_notice` and a couple of
  * RTT.  After calling this function, the local endpoint starts
  * rejecting new incoming streams.  The existing streams are processed
- * normally.
+ * normally.  See also `nghttp3_conn_is_drained`.
  */
 NGHTTP3_EXTERN int nghttp3_conn_shutdown(nghttp3_conn *conn);
 
@@ -2545,6 +2554,15 @@ NGHTTP3_EXTERN int nghttp3_check_header_value(const uint8_t *value, size_t len);
 NGHTTP3_EXTERN int nghttp3_http_parse_priority(nghttp3_pri *dest,
                                                const uint8_t *value,
                                                size_t len);
+
+/**
+ * @function
+ *
+ * `nghttp3_conn_is_drained` returns nonzero if
+ * `nghttp3_conn_shutdown` has been called, and there is no active
+ * remote streams.  This function is for server use only.
+ */
+NGHTTP3_EXTERN int nghttp3_conn_is_drained(nghttp3_conn *conn);
 
 /**
  * @macrosection
