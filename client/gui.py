@@ -44,7 +44,6 @@ class Client(ct.CTk):
 		self.inputb = ct.CTkButton(self, text="Open CTkInputDialog", command=self.get_input)
 		self.inputb.grid(row=2, column=0, padx=20, pady=(10, 10))
 
-
 		#	----	UPPERBAR	----	#
 		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=90)
 		self.upperbar.grid(row=0, column=1, columnspan=5, sticky="nsew")
@@ -57,12 +56,28 @@ class Client(ct.CTk):
 		#	----	REPLAYS FRAME	----	#
 		#	Here will be displayed last 3 uploaded replays, which will
 		#	be clickable and will take to the link of the analyzed replay
+		self.tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(20,20))
+		self.replays_list = []
 		
-		self.replay_info = ct.CTkButton(self, text="replay")
-		self.replay_info.grid(row=2, column=1)
+		replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image = self.tick, 
+			command=self.get_input, hover=False)
+		replay.grid(row=i+1, column=1)
+		self.replays_list.append(replay)
+			
+
+		# self.replay_info = ct.CTkButton(self, image=self.tick, text="Replay", fg_color="transparent", 
+		# 		command=self.get_input, hover=False)
+		# self.replay_info.grid(row=2, column=1)
 
 
-
+	# I need replay name, replay last modified & update date.
+	# TODO: Alternatives:
+	#
+	#	1.	Make a C object for replays with all the necessary info
+	#	2.	Ask to the server for the informations needed
+	def append_replaybt(self, replay):
+		
+		pass
 
 	def get_input(self):
 		dialog = ct.CTkInputDialog(text="Type in a number:", title="")
@@ -75,6 +90,6 @@ class Client(ct.CTk):
 	#	----	AUTOUPLOAD	----	#
 	def main(self):
 		# TEMP
-		replays_path = f"{getcwd()}/ReplayTest"
+		replays_path = "C:/repos/Sc2SenseiClient/ReplayTest"
 		auto_upload(replays_path)
 		self.after(5000, self.main)
