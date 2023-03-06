@@ -19,13 +19,19 @@ def auto_upload(replays_path):
 			("state", c.c_ubyte)
 		]
 	core.upload_all_new.restype = c.POINTER(Replay) * 10
-	up = c.POINTER(Replay) * 10
-	
+
+
+	core.hello.restype = c.c_char_p
+	a = core.hello()
+	arr = []
+
 	old_date = core.get_file_date(c.c_char_p(data_path))
+
 	new_date = core.get_dir_date(c.c_char_p(replays))
+	
 	if new_date > old_date:
 		print("Directory has been modified\n")
-		up = core.upload_all_new(c.c_longlong(old_date), c.c_char_p(replays))
+		arr = core.upload_all_new(c.c_longlong(old_date), c.c_char_p(replays))
 
 		core.wrt_file_date(c.c_char_p(data_path), c.c_longlong(new_date))
 

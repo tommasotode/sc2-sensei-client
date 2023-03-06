@@ -60,6 +60,11 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 	return retcode;
 }
 
+char *hello()
+{
+	return "Hello world";
+}
+
 // Warning: Do not use this function alone (doesn't handle the files)
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
 {
@@ -115,9 +120,9 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 }
 
 //	TODO
-Replay *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
+char **upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 {
-	Replay *uploaded_list = (Replay *) malloc(MAX_UP*sizeof(Replay));
+	char *result[MAX_UP];
 	short rep_count = 0;
 	struct stat info;
 	struct dirent *entry;
@@ -134,15 +139,22 @@ Replay *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 		fstat(fileno(replay), &info);
 		if(info.st_mtime > old_dt)
 		{
-			Replay current = upload_replay(replay, entry->d_name);
-			uploaded_list[rep_count] = current;
+			Replay rep = upload_replay(replay, entry->d_name);
+			char *out;
+			sprintf_s(out, sizeof(rep.play_date), "%lli\n", rep.play_date);
+			strcat_s(out, sizeof(out), rep.upload_date);
+			strcat_s(out, sizeof(out), "\n");
+			strcat_s(out, sizeof(out), rep.name);
+			sprintf_s(out, sizeof(rep.play_date), "\n%d", rep.state);
+			result[rep_count] = out;
+			// Check wether size is of the first or the second one.
 		}
 		fclose(replay);
 		rep_count+=1;
 	}
 	closedir(rep_dir);
 	
-	return uploaded_list;
+	return result;
 }
 
 
