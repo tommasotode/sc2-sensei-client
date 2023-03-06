@@ -55,7 +55,7 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 	curl_off_t nread;
 	size_t retcode = fread(ptr, size, nmemb, readhere);
 	nread = (curl_off_t)retcode;
-	printf("[CURL] %" CURL_FORMAT_CURL_OFF_T " bytes read\n", nread);
+	printf("[CURL] %lli bytes read\n", nread);
 	
 	return retcode;
 }
@@ -68,7 +68,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	fstat(fileno(replay), &info);
 
 	char replay_name[270] = "Name: ";
-	strcat(replay_name, name);
+	strcat_s(replay_name, sizeof(replay_name), name);
 	struct curl_slist *list = NULL;
 	list = curl_slist_append(list, replay_name);
 
@@ -97,52 +97,60 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 
 	if(curl_easy_perform(handle) != CURLE_OK)
 	{
-		printf("\n[!] Unable to upload [%s]\n", replay);
+		printf("\n[!] Unable to upload [%s]\n", name);
 		current.state = FAILURE;
 	}
 	curl_slist_free_all(list);
 	curl_easy_cleanup(handle);
 
-
+	//	Filling replay object
 	time_t raw_time;
 	time(&raw_time);
 	struct tm * local_time = localtime(&raw_time);
 	strftime(current.upload_date, MAX_PATH, "%x - %I:%M%p", local_time);
-
+	strcpy_s(current.name, MAX_PATH, name);
+	current.play_date = info.st_mtime;
+	current.state = SUCCESS;
 	return current;
 }
 
 //	TODO
-check upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
+Replay *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 {
-	check state = SUCCESS;
+	Replay *uploaded_list = (Replay *) malloc(MAX_UP*sizeof(Replay));
+	short rep_count = 0;
 	struct stat info;
 	struct dirent *entry;
 	DIR *rep_dir = opendir(dir_rt);
-	while((entry = readdir(rep_dir)))
+	while((entry = readdir(rep_dir)) 	&& 
+	strcmp(entry->d_name,".") != 0 		&& strcmp(entry->d_name, "..") != 0)
 	{
 		char rep_path[MAX_PATH];
-		// strcpy_s(rep_path, MAX_PATH, dir_rt);
-		// strcat_s(rep_path, MAX_PATH, "\\");
-		// strcat_s(rep_path, MAX_PATH, entry->d_name);
-		strcpy(rep_path, dir_rt);
-		strcat(rep_path, "\\");
-		strcat(rep_path, entry->d_name);
+		strcpy_s(rep_path, MAX_PATH, dir_rt);
+		strcat_s(rep_path, MAX_PATH, "\\");
+		strcat_s(rep_path, MAX_PATH, entry->d_name);
 		
 		FILE *replay = fopen(rep_path, "rb");
 		fstat(fileno(replay), &info);
-		if (info.st_mtime > old_dt)
+		if(info.st_mtime > old_dt)
 		{
-			state = upload_replay(replay, entry->d_name);
-			if(state == FAILURE)
-				return state;
+			Replay current = upload_replay(replay, entry->d_name);
+			uploaded_list[rep_count] = current;
 		}
 		fclose(replay);
+		rep_count+=1;
 	}
 	closedir(rep_dir);
 	
-	return state;
+	return uploaded_list;
 }
+
+
+void clean(Replay *old_list)
+{
+	free(old_list);
+}
+
 
 //						Debug mode								//
 check debug_mode()
@@ -150,12 +158,11 @@ check debug_mode()
 	short mode;
 	printf("DEBUG MODE\n\n");
 	printf("0 - Quit\n1 - Upload single replay\n");
-	scanf("%d", &mode);	
+	scanf("%hd", &mode);	
 	if (mode == 1)
 	{
 		char path[MAX_PATH];
 		char name[MAX_PATH] = "debug_replay";
-		struct stat info;
 		FILE *rep;
 		printf("Insert the replay path\n");
 		scanf("%s", path);
@@ -165,7 +172,7 @@ check debug_mode()
 			fclose(rep);
 			return FAILURE;
 		}
-		if(upload_replay(rep, name) == FAILURE)
+		if(upload_replay(rep, name).state == FAILURE)
 		{
 			perror("Failed to upload the replay");
 			return FAILURE;
