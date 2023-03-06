@@ -18,6 +18,7 @@ typedef struct replay
 	time_t play_date;
 	char *upload_date;
 	char name[MAX_PATH];
+	char replay_path[MAX_PATH];
 	check state;
 } Replay;
 

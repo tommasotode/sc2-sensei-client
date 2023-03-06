@@ -59,10 +59,10 @@ class Client(ct.CTk):
 		self.tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(20,20))
 		self.replays_list = []
 		
-		replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image = self.tick, 
-			command=self.get_input, hover=False)
-		replay.grid(row=i+1, column=1)
-		self.replays_list.append(replay)
+		# replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image = self.tick, 
+		# 	command=self.get_input, hover=False)
+		# replay.grid(row=i+1, column=1)
+		# self.replays_list.append(replay)
 			
 
 		# self.replay_info = ct.CTkButton(self, image=self.tick, text="Replay", fg_color="transparent", 
