@@ -109,25 +109,44 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	curl_easy_cleanup(handle);
 
 	//	Filling replay object
-	time_t raw_time;
-	time(&raw_time);
-	struct tm * local_time = localtime(&raw_time);
-	strftime(current.upload_date, MAX_PATH, "%x - %I:%M%p", local_time);
 	strcpy_s(current.name, MAX_PATH, name);
 	current.play_date = info.st_mtime;
+	current.upload_date = time(NULL);
 	current.state = SUCCESS;
 	return current;
 }
 
-//	TODO
-char **upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
+
+
+void json_add_replay(Replay rep, cJSON *replay_list)
 {
-	char *result[MAX_UP];
+	//NOTE: Returns a heap allocated string, you are required to free it after use.
+	cJSON *replay = NULL;
+
+	cJSON_AddStringToObject(replay, "name", rep.name);
+	cJSON_AddNumberToObject(replay, "play_date", rep.play_date);
+	cJSON_AddNumberToObject(replay, "play_date", rep.upload_date);
+	cJSON_AddBoolToObject(replay, "state", (cJSON_bool)rep.state);
+
+	cJSON_AddItemToArray(replay_list, replay);
+}
+
+
+//	TODO
+char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
+{
+	char *output = NULL;
 	short rep_count = 0;
 	struct stat info;
 	struct dirent *entry;
 	DIR *rep_dir = opendir(dir_rt);
-	while((entry = readdir(rep_dir)) 	&& 
+	check result = SUCCESS;
+
+	cJSON *json = cJSON_CreateObject();
+	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
+
+	//maybe a for could be better
+	while((entry = readdir(rep_dir)) 	&& rep_count < 10				&&
 	strcmp(entry->d_name,".") != 0 		&& strcmp(entry->d_name, "..") != 0)
 	{
 		char rep_path[MAX_PATH];
@@ -140,24 +159,22 @@ char **upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 		if(info.st_mtime > old_dt)
 		{
 			Replay rep = upload_replay(replay, entry->d_name);
-			
-			// to be replaced with json
-			
-			// char out[200];
-			// sprintf_s(out, sizeof(rep.play_date), "%lli\n", rep.play_date);
-			// strcat_s(out, sizeof(out), rep.upload_date);
-			// strcat_s(out, sizeof(out), "\n");
-			// strcat_s(out, sizeof(out), rep.name);
-			// sprintf_s(out, sizeof(rep.play_date), "\n%d", rep.state);
-			// result[rep_count] = out;
-			// Check wether size is of the first or the second one.
+			if(rep.state == FAILURE)
+			{
+				result = FAILURE;
+			}
+			json_add_replay(rep, replay_block);
 		}
 		fclose(replay);
 		rep_count+=1;
 	}
 	closedir(rep_dir);
-	
-	return result;
+	cJSON_AddBoolToObject(json, "success", (cJSON_bool)result);
+	output = cJSON_Print(json);
+	if(output == NULL)
+		perror("Failure in printing object");
+
+	return output;
 }
 
 
