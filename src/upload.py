@@ -3,27 +3,13 @@ import ctypes as c
 
 def auto_upload(replays_path):
 	data_path = f"{os.getcwd()}/data/date.dat".encode()
-	core = c.CDLL(f"{os.getcwd()}/lib/core.so")
+	core = c.CDLL(f"{os.getcwd()}/bin/core.so")
 	replays = replays_path.encode()
 
 	if not core.check_files(c.c_char_p(data_path), c.c_char_p(replays)):
 		print("Aborting")
 		exit()
 
-	class Replay(c.Structure):
-		_fields_ = [
-			("play_date", c.c_longlong),
-			("upload_date", c.c_char_p),
-			("name", c.c_char_p),
-			("replay_path", c.c_char_p),
-			("state", c.c_ubyte)
-		]
-	core.upload_all_new.restype = c.POINTER(Replay) * 10
-
-
-	core.hello.restype = c.c_char_p
-	a = core.hello()
-	arr = []
 
 	old_date = core.get_file_date(c.c_char_p(data_path))
 
