@@ -1,7 +1,7 @@
 #include "include/core.h"
 
 //	Use this to check the files before using other functions
-check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH])
+__declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH])
 {
 	check state = SUCCESS;
 	FILE *datcheck;
@@ -22,14 +22,14 @@ check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH])
 	return state;
 }
 
-void wrt_file_date(char dat_rt[MAX_PATH], time_t date)
+__declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date)
 {
 	FILE *data_file = fopen(dat_rt, "wb");
 	fwrite(&date, sizeof(time_t), 1, data_file);
 	fclose(data_file);
 }
 
-time_t get_file_date(char dat_rt[MAX_PATH])
+__declspec(dllexport) time_t get_file_date(char dat_rt[MAX_PATH])
 {
 	time_t output;
 	FILE *datf = fopen(dat_rt, "rb");
@@ -39,7 +39,7 @@ time_t get_file_date(char dat_rt[MAX_PATH])
 	return output;
 }
 
-time_t get_dir_date(char dir_rt[MAX_PATH])
+__declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH])
 {
 	DIR *repl_dir = opendir(dir_rt);
 	readdir(repl_dir);
@@ -118,7 +118,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 
 
 
-void json_add_replay(Replay rep, cJSON *replay_list)
+__declspec(dllexport) void json_add_replay(Replay rep, cJSON *replay_list)
 {
 	//NOTE: Returns a heap allocated string, you are required to free it after use.
 	cJSON *replay = NULL;
@@ -133,7 +133,7 @@ void json_add_replay(Replay rep, cJSON *replay_list)
 
 
 //	TODO
-char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
+__declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 {
 	char *output = NULL;
 	short rep_count = 0;
@@ -177,11 +177,6 @@ char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 	return output;
 }
 
-
-void clean(Replay *old_list)
-{
-	free(old_list);
-}
 
 
 //						Debug mode								//
