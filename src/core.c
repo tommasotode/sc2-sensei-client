@@ -146,8 +146,8 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
 
 	//maybe a for could be better
-	while((entry = readdir(rep_dir)) 	&& rep_count < 10				&&
-	strcmp(entry->d_name,".") != 0 		&& strcmp(entry->d_name, "..") != 0)
+	while((entry = readdir(rep_dir)) 	&& rep_count < 10)
+	// strcmp(entry->d_name,".") != 0 		&& strcmp(entry->d_name, "..") != 0)
 	{
 		char rep_path[MAX_PATH];
 		strcpy_s(rep_path, MAX_PATH, dir_rt);
