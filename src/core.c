@@ -114,8 +114,6 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 }
 
 
-
-//	TODO
 __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 {
 	char *output = NULL;
@@ -153,19 +151,19 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 			cJSON_AddBoolToObject(replay_object, "result", (cJSON_bool)rep.state);
 
 			cJSON_AddItemToArray(replay_block, replay_object);
-			
-			
-			// json_add_replay(rep, replay_block);
+
 		}
 		fclose(replay);
 		rep_count+=1;
 	}
 	closedir(rep_dir);
 	cJSON_AddBoolToObject(json, "success", (cJSON_bool)result);
+	
 	output = cJSON_Print(json);
 	if(output == NULL)
 		perror("Failure in printing object");
-
+	cJSON_Delete(json);
+	
 	return output;
 }
 
