@@ -60,10 +60,6 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 	return retcode;
 }
 
-char *hello()
-{
-	return "Hello world";
-}
 
 // Warning: Do not use this function alone (doesn't handle the files)
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
@@ -85,7 +81,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 		return current;
 	}
 	// Setting URL to upload to and how
-	curl_easy_setopt(handle, CURLOPT_URL, "https://sc2sensei.top/auto_upload");
+	curl_easy_setopt(handle, CURLOPT_URL, "localhost:5000/auto_upload");
 	curl_easy_setopt(handle, CURLOPT_UPLOAD, 1L);
 	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0);
 
@@ -113,23 +109,10 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
 	current.state = SUCCESS;
+	
 	return current;
 }
 
-
-
-__declspec(dllexport) void json_add_replay(Replay rep, cJSON *replay_list)
-{
-	//NOTE: Returns a heap allocated string, you are required to free it after use.
-	cJSON *replay = NULL;
-
-	cJSON_AddStringToObject(replay, "name", rep.name);
-	cJSON_AddNumberToObject(replay, "play_date", rep.play_date);
-	cJSON_AddNumberToObject(replay, "play_date", rep.upload_date);
-	cJSON_AddBoolToObject(replay, "state", (cJSON_bool)rep.state);
-
-	cJSON_AddItemToArray(replay_list, replay);
-}
 
 
 //	TODO
@@ -160,10 +143,19 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 		{
 			Replay rep = upload_replay(replay, entry->d_name);
 			if(rep.state == FAILURE)
-			{
 				result = FAILURE;
-			}
-			json_add_replay(rep, replay_block);
+			
+			cJSON *replay_object = cJSON_CreateObject();
+
+			cJSON_AddStringToObject(replay_object, "name", rep.name);
+			cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
+			cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
+			cJSON_AddBoolToObject(replay_object, "result", (cJSON_bool)rep.state);
+
+			cJSON_AddItemToArray(replay_block, replay_object);
+			
+			
+			// json_add_replay(rep, replay_block);
 		}
 		fclose(replay);
 		rep_count+=1;
@@ -180,7 +172,7 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 
 
 //						Debug mode								//
-check debug_mode()
+__declspec(dllexport) check debug_mode()
 {
 	short mode;
 	printf("DEBUG MODE\n\n");
@@ -206,5 +198,6 @@ check debug_mode()
 		}
 		fclose(rep);
 	}	
+	
 	return SUCCESS;
 }
