@@ -4,7 +4,7 @@ from os import getcwd
 from src.upload import auto_upload
 from src.files import Data
 
-class Client(ct.CTk):
+class ClientGUI(ct.CTk):
 	def __init__(self):
 		super().__init__()
 
@@ -75,9 +75,6 @@ class Client(ct.CTk):
 	#
 	#	1.	Make a C object for replays with all the necessary info
 	#	2.	Ask to the server for the informations needed
-	def append_replaybt(self, replay):
-		
-		pass
 
 	def get_input(self):
 		dialog = ct.CTkInputDialog(text="Type in a number:", title="")

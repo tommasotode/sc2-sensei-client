@@ -1,6 +1,6 @@
 import pickle
 
-class Data:
+class PlayerData:
 	def __init__(self, file_path):
 		self.file_path = file_path
 		self.settings = self.get()
@@ -17,3 +17,11 @@ class Data:
 	def set(self, settings: dict):
 		with open(self.file_path, "wb") as file:
 			file.write(pickle.dumps(settings))
+
+class Logs:
+	def __init__(self, file_path):
+		self.file_path = file_path
+
+	def write_json(self, json):
+		with open(self.file_path, "a") as file:
+			file.write(json)

@@ -61,6 +61,8 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 }
 
 
+// TODO: Use the parse result to send it for the logging
+
 // Warning: Do not use this function alone (doesn't handle the files)
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
 {
@@ -72,6 +74,8 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	strcat_s(replay_name, sizeof(replay_name), name);
 	struct curl_slist *list = NULL;
 	list = curl_slist_append(list, replay_name);
+
+	// TODO: Add mimetype to the header
 
 	CURL *handle = curl_easy_init();
 	if(!handle)

@@ -1,30 +1,33 @@
 import os
 import ctypes as c
 import json
+import time
 
-def auto_upload(replays_path):
-	core = c.CDLL(f"{os.getcwd()}/bin/core.so")
-	
-	data_path = f"{os.getcwd()}/data/date.dat".encode()
-	replays = replays_path.encode()
+class AutoUploader:
+	def __init__(self, replays_path):
+		self.core = c.CDLL(f"{os.getcwd()}/bin/core.so")
+		self.data_path = f"{os.getcwd()}/data/date.dat".encode()
+		self.replays_path = replays_path.encode()
+		if not self.core.check_files(c.c_char_p(self.data_path), c.c_char_p(self.replays_path)):
+			print("Aborting")
+			return None
 
-	if not core.check_files(c.c_char_p(data_path), c.c_char_p(replays)):
-		print("Aborting")
-		exit()
+		self.core.upload_all_new.restype = c.c_char_p
 
+	def start(self):
+		while True:
+			old_date = self.core.get_file_date(c.c_char_p(self.data_path))
+			new_date = self.core.get_dir_date(c.c_char_p(self.replays_path))
 
-	old_date = core.get_file_date(c.c_char_p(data_path))
-	new_date = core.get_dir_date(c.c_char_p(replays))
-	
-	core.upload_all_new.restype = c.c_char_p
+			if new_date > old_date:
+				print("Directory has been modified\n")
+				string = self.core.upload_all_new(c.c_longlong(old_date), c.c_char_p(self.replays_path))
+				log = json.loads(string)
+				self.core.wrt_file_date(c.c_char_p(self.data_path), c.c_longlong(new_date))
 
-	if new_date > old_date:
-		print("Directory has been modified\n")
-		arr = core.upload_all_new(c.c_longlong(old_date), c.c_char_p(replays))
-		new = json.loads(arr)
-		core.wrt_file_date(c.c_char_p(data_path), c.c_longlong(new_date))
+			elif new_date == old_date:
+				print("Ok")
+			else:
+				print("There was an error.")
 
-	elif new_date == old_date:
-		print("Ok")
-	else:
-		print("There was an error.")
+			time.sleep(10)
