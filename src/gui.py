@@ -1,17 +1,10 @@
 import customtkinter as ct
 from PIL import Image as img
 from os import getcwd
-from src.upload import auto_upload
-from src.files import Data
 
 class ClientGUI(ct.CTk):
 	def __init__(self):
 		super().__init__()
-
-		file_path = f"{getcwd()}/data/playerinfo.dat"
-		data = Data(file_path)
-		data.settings["a"] = 100
-		print(data.settings)
 
 		ct.set_appearance_mode("dark")
 		ct.set_default_color_theme("dark-blue")
@@ -70,11 +63,6 @@ class ClientGUI(ct.CTk):
 		# self.replay_info.grid(row=2, column=1)
 
 
-	# I need replay name, replay last modified & update date.
-	# TODO: Alternatives:
-	#
-	#	1.	Make a C object for replays with all the necessary info
-	#	2.	Ask to the server for the informations needed
 
 	def get_input(self):
 		dialog = ct.CTkInputDialog(text="Type in a number:", title="")
@@ -82,11 +70,3 @@ class ClientGUI(ct.CTk):
 		player_name = dialog.get_input()
 		self.welcome.configure(text="Welcome, " + player_name)
 		# Write player name in the file
-
-
-	#	----	AUTOUPLOAD	----	#
-	def main(self):
-		# TEMP
-		replays_path = "C:/repos/Sc2SenseiClient/ReplayTest"
-		auto_upload(replays_path)
-		self.after(5000, self.main)

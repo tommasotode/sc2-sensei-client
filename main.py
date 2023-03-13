@@ -5,9 +5,11 @@ import threading
 
 if __name__ == "__main__":
 	app = gui.ClientGUI()
-	uploader = up.AutoUploader("C:/repos/Sc2SenseiClient/ReplayTest")
+	uploader = up.AutoUploader("C:/repos/Sc2SenseiClient/ReplayTest", True)
 	if uploader == None:
 		exit()
 
-	uploader.start()
+	up_thread = threading.Thread(target=uploader.start)
+	up_thread.start()
+
 	app.mainloop()

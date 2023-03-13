@@ -4,7 +4,7 @@ import json
 import time
 
 class AutoUploader:
-	def __init__(self, replays_path):
+	def __init__(self, replays_path, logging):
 		self.core = c.CDLL(f"{os.getcwd()}/bin/core.so")
 		self.data_path = f"{os.getcwd()}/data/date.dat".encode()
 		self.replays_path = replays_path.encode()
@@ -15,7 +15,8 @@ class AutoUploader:
 		self.core.upload_all_new.restype = c.c_char_p
 
 	def start(self):
-		while True:
+		self.run = True
+		while self.run:
 			old_date = self.core.get_file_date(c.c_char_p(self.data_path))
 			new_date = self.core.get_dir_date(c.c_char_p(self.replays_path))
 
@@ -31,3 +32,6 @@ class AutoUploader:
 				print("There was an error.")
 
 			time.sleep(10)
+	
+	def stop(self):
+		self.run = False
