@@ -118,6 +118,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 }
 
 
+// TODO: Try to implement multithreading for uploads
 __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 {
 	char *output = NULL;

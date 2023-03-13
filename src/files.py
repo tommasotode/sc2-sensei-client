@@ -23,14 +23,21 @@ class Settings:
 		new_settings[setting] = new_value
 		self.set(new_settings)
 
+
 class Logs:
 	def __init__(self):
 		self.path = f"{os.getcwd()}/logs/logs.json"
 
-	def new(self, new_log):
-		with open(self.path, "a") as file:
+
+	# I can use only what I need for the logs, since I get the parsed json
+	# I have to make a preset json with only the structure, and I add to an array
+	# only the replay objects that I need.
+
+	def add_replays(self, log):
+		new_log = self.get()
+		new_log["Replays"].append(log["Replays"])
+		with open(self.path, "w") as file:
 			json.dump(new_log, file, indent=2)
-			file.write("\n")
 
 	def get(self):
 		with open(self.path, "r") as file:
@@ -41,4 +48,3 @@ class Logs:
 		except Exception as e:
 			print(f"Corrupted file: {e}")
 			return None
-		

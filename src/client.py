@@ -1,10 +1,13 @@
 import customtkinter as ct
 from PIL import Image as img
 from os import getcwd
+import src.files as files
 
-class ClientGUI(ct.CTk):
+class App(ct.CTk):
 	def __init__(self):
 		super().__init__()
+
+		self.settings = files.Settings()
 
 		ct.set_appearance_mode("dark")
 		ct.set_default_color_theme("dark-blue")
@@ -69,4 +72,6 @@ class ClientGUI(ct.CTk):
 		dialog.overrideredirect(True)
 		player_name = dialog.get_input()
 		self.welcome.configure(text="Welcome, " + player_name)
+		
 		# Write player name in the file
+		self.settings.update("Name", player_name)

@@ -29,7 +29,7 @@ class AutoUploader:
 				print("Directory has been modified\n")
 				json_string = self.core.upload_all_new(c.c_longlong(old_date), c.c_char_p(self.replays_path))
 				log = json.loads(json_string)
-				self.log_handle.new(log)
+				self.log_handle.add_replays(log)
 
 				self.core.wrt_file_date(c.c_char_p(self.data_path), c.c_longlong(new_date))
 
