@@ -20,6 +20,10 @@ typedef struct Replay
 	time_t play_date;
 	time_t upload_date;
 	check state;
+	//	Add received link (id) example (i only need id)
+	//	https://sc2sensei.top/replay_analysis?replay_id=640cec904126b7a866b97cd9
+
+	//	Add parsing result from the server
 } Replay;
 
 check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);

@@ -2,6 +2,7 @@ import customtkinter as ct
 from PIL import Image as img
 from os import getcwd
 import src.files as files
+import webbrowser
 
 class App(ct.CTk):
 	def __init__(self):
@@ -14,10 +15,8 @@ class App(ct.CTk):
 		logs = self.log_handle.get()
 		if len(logs["Replays"]) == 0:
 			return None
-
 		last = []
 		reverse = logs["Replays"][::-1]
-		
 		last.append(reverse[0])
 		if len(logs["Replays"]) == 2:
 			last.append(reverse[1])
@@ -34,6 +33,9 @@ class App(ct.CTk):
 		
 		# Write player name in the file
 		self.settings.update("Name", player_name)
+
+	def open_replay(self, link):
+		webbrowser.open(link, new=1)
 
 class AppGUI(App):
 	def __init__(self):
@@ -82,13 +84,18 @@ class AppGUI(App):
 		#	Here will be displayed last 3 uploaded replays, which will
 		#	be clickable and will take to the link of the analyzed replay
 		self.tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(20,20))
-		self.replays_list = []
+		self.replays_list = {}
 		
-		# replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image = self.tick, 
-		# 	command=self.get_input, hover=False)
-		# replay.grid(row=i+1, column=1)
-		# self.replays_list.append(replay)
+		for i in range(3):
+
+			replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image=self.tick, 
+				command=lambda: self.open_replay("https://sc2sensei.top/"), hover=False)
 			
+
+			replay.grid(row=i+1, column=1)
+			
+			# TODO: Add links to the logging, so I can get them with get_last_replays() and put them in open_replay() 
+
 
 		# self.replay_info = ct.CTkButton(self, image=self.tick, text="Replay", fg_color="transparent", 
 		# 		command=self.get_input, hover=False)
