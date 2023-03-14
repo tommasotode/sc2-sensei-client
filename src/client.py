@@ -6,8 +6,38 @@ import src.files as files
 class App(ct.CTk):
 	def __init__(self):
 		super().__init__()
+		
+		self.set_handle = files.Settings()
+		self.log_handle = files.Logs()
 
-		self.settings = files.Settings()
+	def get_last_replays(self):
+		logs = self.log_handle.get()
+		if len(logs["Replays"]) == 0:
+			return None
+
+		last = []
+		reverse = logs["Replays"][::-1]
+		
+		last.append(reverse[0])
+		if len(logs["Replays"]) == 2:
+			last.append(reverse[1])
+		else:
+			last.append(reverse[2])
+
+		return last
+
+	def get_input(self):
+		dialog = ct.CTkInputDialog(text="Type in a number:", title="")
+		dialog.overrideredirect(True)
+		player_name = dialog.get_input()
+		self.welcome.configure(text="Welcome, " + player_name)
+		
+		# Write player name in the file
+		self.settings.update("Name", player_name)
+
+class AppGUI(App):
+	def __init__(self):
+		super().__init__()
 
 		ct.set_appearance_mode("dark")
 		ct.set_default_color_theme("dark-blue")
@@ -19,7 +49,6 @@ class App(ct.CTk):
 		self.grid_rowconfigure(0, weight=1)
 		self.grid_rowconfigure((1,4), weight=10)
 		self.grid_columnconfigure(1, weight=1)
-
 
 		#	----	SIDEBAR		----	#
 		self.sidebar = ct.CTkFrame(self, corner_radius=0)
@@ -64,14 +93,3 @@ class App(ct.CTk):
 		# self.replay_info = ct.CTkButton(self, image=self.tick, text="Replay", fg_color="transparent", 
 		# 		command=self.get_input, hover=False)
 		# self.replay_info.grid(row=2, column=1)
-
-
-
-	def get_input(self):
-		dialog = ct.CTkInputDialog(text="Type in a number:", title="")
-		dialog.overrideredirect(True)
-		player_name = dialog.get_input()
-		self.welcome.configure(text="Welcome, " + player_name)
-		
-		# Write player name in the file
-		self.settings.update("Name", player_name)

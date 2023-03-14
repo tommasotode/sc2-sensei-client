@@ -1,104 +1,52 @@
 {
   "Replays": [
-    [
-      {
-        "name": "Ancient Cistern LE (16).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740424,
-        "result": true
-      },
-      {
-        "name": "Babylon LE (13).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740427,
-        "result": true
-      },
-      {
-        "name": "Dragon Scales LE (11).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740432,
-        "result": true
-      },
-      {
-        "name": "Dragon Scales LE (12).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740436,
-        "result": true
-      },
-      {
-        "name": "Gresvan LE (11).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740439,
-        "result": true
-      },
-      {
-        "name": "NeoHumanity LE (13).SC2Replay",
-        "play_date": 1678737427,
-        "upload_date": 1678740444,
-        "result": true
-      },
-      {
-        "name": "NeoHumanity LE (14).SC2Replay",
-        "play_date": 1678737427,
-        "upload_date": 1678740448,
-        "result": true
-      },
-      {
-        "name": "NeoHumanity LE (15).SC2Replay",
-        "play_date": 1678737427,
-        "upload_date": 1678740453,
-        "result": true
-      }
-    ],
-    [
-      {
-        "name": "Ancient Cistern LE (16).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740559,
-        "result": true
-      },
-      {
-        "name": "Babylon LE (13).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740563,
-        "result": true
-      },
-      {
-        "name": "Dragon Scales LE (11).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740568,
-        "result": true
-      },
-      {
-        "name": "Dragon Scales LE (12).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740571,
-        "result": true
-      },
-      {
-        "name": "Gresvan LE (11).SC2Replay",
-        "play_date": 1678610149,
-        "upload_date": 1678740575,
-        "result": true
-      },
-      {
-        "name": "NeoHumanity LE (13).SC2Replay",
-        "play_date": 1678737427,
-        "upload_date": 1678740579,
-        "result": true
-      },
-      {
-        "name": "NeoHumanity LE (14).SC2Replay",
-        "play_date": 1678737427,
-        "upload_date": 1678740583,
-        "result": true
-      },
-      {
-        "name": "NeoHumanity LE (15).SC2Replay",
-        "play_date": 1678737427,
-        "upload_date": 1678740589,
-        "result": true
-      }
-    ]
+    {
+      "name": "Ancient Cistern LE (16).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790014,
+      "result": true
+    },
+    {
+      "name": "Babylon LE (13).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790016,
+      "result": true
+    },
+    {
+      "name": "Dragon Scales LE (11).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790018,
+      "result": true
+    },
+    {
+      "name": "Dragon Scales LE (12).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790020,
+      "result": true
+    },
+    {
+      "name": "Gresvan LE (11).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790023,
+      "result": true
+    },
+    {
+      "name": "NeoHumanity LE (13).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790025,
+      "result": true
+    },
+    {
+      "name": "NeoHumanity LE (14).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790027,
+      "result": true
+    },
+    {
+      "name": "NeoHumanity LE (15).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678790029,
+      "result": true
+    }
   ]
 }

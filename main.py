@@ -3,7 +3,8 @@ import src.upload as up
 import threading
 
 if __name__ == "__main__":
-	app = client.App()
+	app = client.AppGUI()
+	
 	uploader = up.AutoUploader("C:/repos/Sc2SenseiClient/ReplayTest", True)
 	if uploader == None:
 		exit()
