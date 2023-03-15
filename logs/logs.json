@@ -3,50 +3,93 @@
     {
       "name": "Ancient Cistern LE (16).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790014,
-      "result": true
+      "upload_date": 1678881790,
+      "success": true,
+      "result": ""
     },
     {
       "name": "Babylon LE (13).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790016,
-      "result": true
+      "upload_date": 1678881794,
+      "success": true,
+      "result": ""
     },
     {
       "name": "Dragon Scales LE (11).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790018,
-      "result": true
+      "upload_date": 1678881800,
+      "success": true,
+      "result": ""
     },
     {
       "name": "Dragon Scales LE (12).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790020,
-      "result": true
+      "upload_date": 1678881804,
+      "success": true,
+      "result": ""
     },
     {
       "name": "Gresvan LE (11).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790023,
-      "result": true
+      "upload_date": 1678881808,
+      "success": true,
+      "result": ""
     },
     {
       "name": "NeoHumanity LE (13).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790025,
-      "result": true
+      "upload_date": 1678881812,
+      "success": true,
+      "result": ""
     },
     {
       "name": "NeoHumanity LE (14).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790027,
-      "result": true
+      "upload_date": 1678881817,
+      "success": true,
+      "result": ""
     },
     {
       "name": "NeoHumanity LE (15).SC2Replay",
       "play_date": 1678740965,
-      "upload_date": 1678790029,
-      "result": true
+      "upload_date": 1678881823,
+      "success": true,
+      "result": ""
+    },
+    {
+      "name": "Ancient Cistern LE (16).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678882012,
+      "success": true,
+      "result": "Replay received [id=(<ParsingResult.SUCCESS: 'Success'>, '640ee131d048269db9097497')]"
+    },
+    {
+      "name": "Babylon LE (13).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678882016,
+      "success": true,
+      "result": "Replay received [id=(<ParsingResult.REPLAY_TOO_SHORT: 'Replay is too short'>, None)]"
+    },
+    {
+      "name": "Dragon Scales LE (11).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678882021,
+      "success": true,
+      "result": "Replay received [id=(<ParsingResult.SUCCESS: 'Success'>, '640ee13ad048269db90974ac')]"
+    },
+    {
+      "name": "Dragon Scales LE (12).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678882024,
+      "success": true,
+      "result": "Replay received [id=(<ParsingResult.REPLAY_TOO_SHORT: 'Replay is too short'>, None)]"
+    },
+    {
+      "name": "Gresvan LE (11).SC2Replay",
+      "play_date": 1678740965,
+      "upload_date": 1678882028,
+      "success": true,
+      "result": "Replay received [id=(<ParsingResult.REPLAY_TOO_SHORT: 'Replay is too short'>, None)]"
     }
   ]
 }

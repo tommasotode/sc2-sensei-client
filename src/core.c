@@ -146,7 +146,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
 	current.state = SUCCESS;
-	strcpy_s(current.response, response.size, response.memory);
+	strcpy_s(current.response, MAX_RESPONSE, response.memory);
 
 
 
@@ -191,7 +191,8 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 			cJSON_AddStringToObject(replay_object, "name", rep.name);
 			cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
 			cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
-			cJSON_AddBoolToObject(replay_object, "result", (cJSON_bool)rep.state);
+			cJSON_AddBoolToObject(replay_object, "success", (cJSON_bool)rep.state);
+			cJSON_AddStringToObject(replay_object, "result", rep.response);
 
 			cJSON_AddItemToArray(replay_block, replay_object);
 
