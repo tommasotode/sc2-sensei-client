@@ -2,7 +2,9 @@
 #define CORE_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <dirent.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <curl/curl.h>
@@ -25,6 +27,12 @@ typedef struct Replay
 
 	//	Add parsing result from the server
 } Replay;
+
+struct MemoryStruct
+{
+	char *memory;
+	size_t size;
+};
 
 check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
 void wrt_file_date(char dat_rt[MAX_PATH], time_t date);

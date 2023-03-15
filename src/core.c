@@ -52,12 +52,31 @@ __declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH])
 size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	FILE *readhere = (FILE *)userdata;
-	curl_off_t nread;
 	size_t retcode = fread(ptr, size, nmemb, readhere);
-	nread = (curl_off_t)retcode;
+	curl_off_t nread = (curl_off_t)retcode;
 	printf("[CURL] %lli bytes read\n", nread);
 	
 	return retcode;
+}
+
+size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+	// contents is realsize long, so we must get realsize and resize
+	// then, we copy contents to our reallocated memory block
+	
+	size_t realsize = size * nmemb;
+	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+	char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+	if(!ptr)
+	{
+		perror("Not enough memory");
+		return 0;
+	}
+
+	mem->memory = ptr;
+	memcpy(&(mem->memory[mem->size]), contents, realsize);
+	mem->size = mem->size + realsize;
+	mem->memory[mem->size] = 0;
 }
 
 
