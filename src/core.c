@@ -51,6 +51,7 @@ __declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH])
 
 size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
+	// read from a file (size specified outside)
 	FILE *readhere = (FILE *)userdata;
 	size_t retcode = fread(ptr, size, nmemb, readhere);
 	curl_off_t nread = (curl_off_t)retcode;
@@ -61,8 +62,9 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 
 size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 {
-	// contents is realsize long, so we must get realsize and resize
-	// then, we copy contents to our reallocated memory block
+	// contents is a pointer to contents[realsize]
+	// calculate realsize, reallocate a memoryblock[realsize]
+	// put contents in memoryblock[realsize]
 	
 	size_t realsize = size * nmemb;
 	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
@@ -77,6 +79,8 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 	memcpy(&(mem->memory[mem->size]), contents, realsize);
 	mem->size = mem->size + realsize;
 	mem->memory[mem->size] = 0;
+
+	return realsize;
 }
 
 
@@ -88,6 +92,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	Replay current;
 	struct stat info;
 	fstat(fileno(replay), &info);
+	char *server_output;
 
 	char replay_name[270] = "Name: ";
 	strcat_s(replay_name, sizeof(replay_name), name);
@@ -112,6 +117,10 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	curl_easy_setopt(handle, CURLOPT_READDATA, replay);
 	curl_easy_setopt(handle, CURLOPT_READFUNCTION, read_callback);
 	curl_easy_setopt(handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)info.st_size);
+
+	// Get server output and write it to a string
+	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
+	curl_easy_setopt(handle, CURLOPT_WRITEDATA, server_output);
 
 	// Adding replay name to headers
 	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
