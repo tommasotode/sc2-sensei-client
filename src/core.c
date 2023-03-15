@@ -92,9 +92,11 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	Replay current;
 	struct stat info;
 	fstat(fileno(replay), &info);
-	char *server_output;
+	struct MemoryStruct response;
+	response.memory = malloc(1);
+	response.size = 0;
 
-	char replay_name[270] = "Name: ";
+	char replay_name[MAX_PATH + 10] = "Name: ";
 	strcat_s(replay_name, sizeof(replay_name), name);
 	struct curl_slist *list = NULL;
 	list = curl_slist_append(list, replay_name);
@@ -120,7 +122,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 
 	// Get server output and write it to a string
 	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
-	curl_easy_setopt(handle, CURLOPT_WRITEDATA, server_output);
+	curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&response);
 
 	// Adding replay name to headers
 	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
@@ -133,6 +135,9 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 		printf("\n[!] Unable to upload [%s]\n", name);
 		current.state = FAILURE;
 	}
+	printf("%lu bytes retrieved\n", (unsigned long)response.size);
+	printf("\n[MESSAGE] %s\n", response.memory);
+
 	curl_slist_free_all(list);
 	curl_easy_cleanup(handle);
 
@@ -141,7 +146,12 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
 	current.state = SUCCESS;
-	
+	strcpy_s(current.response, response.size, response.memory);
+
+
+
+	free(response.memory);
+
 	return current;
 }
 

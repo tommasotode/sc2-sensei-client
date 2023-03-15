@@ -14,6 +14,7 @@
 #define FAILURE 0
 
 #define MAX_UP 10
+#define MAX_RESPONSE 100
 
 typedef unsigned char check;
 typedef struct Replay
@@ -22,6 +23,7 @@ typedef struct Replay
 	time_t play_date;
 	time_t upload_date;
 	check state;
+	char response[MAX_RESPONSE];
 	//	Add received link (id) example (i only need id)
 	//	https://sc2sensei.top/replay_analysis?replay_id=640cec904126b7a866b97cd9
 
