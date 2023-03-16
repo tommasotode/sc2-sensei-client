@@ -96,10 +96,15 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	response.memory = malloc(1);
 	response.size = 0;
 
-	char replay_name[MAX_PATH + 10] = "Name: ";
+	char replay_name[MAX_PATH + 10] = "name: ";
+	char player_name[40] = "user_id: ";
+	char player_id[] = "6412fd5f19e788cc8e91e20d";
 	strcat_s(replay_name, sizeof(replay_name), name);
+	strcat_s(player_name, sizeof(player_name), player_id);
+
 	struct curl_slist *list = NULL;
 	list = curl_slist_append(list, replay_name);
+	list = curl_slist_append(list, player_name);
 
 	// TODO: Add mimetype to the header
 
@@ -147,7 +152,6 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	current.upload_date = time(NULL);
 	current.state = SUCCESS;
 	strcpy_s(current.response, MAX_RESPONSE, response.memory);
-
 
 
 	free(response.memory);
