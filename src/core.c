@@ -1,6 +1,5 @@
 #include "include/core.h"
 
-//	Use this to check the files before using other functions
 __declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH])
 {
 	check state = SUCCESS;
@@ -52,6 +51,7 @@ __declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH])
 size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	// read from a file (size specified outside)
+
 	FILE *readhere = (FILE *)userdata;
 	size_t retcode = fread(ptr, size, nmemb, readhere);
 	curl_off_t nread = (curl_off_t)retcode;
@@ -62,9 +62,7 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 
 size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 {
-	// contents is a pointer to contents[realsize]
-	// calculate realsize, reallocate a memoryblock[realsize]
-	// put contents in memoryblock[realsize]
+	// create memory block and put contents in it
 	
 	size_t realsize = size * nmemb;
 	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
@@ -83,8 +81,6 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 	return realsize;
 }
 
-
-// TODO: Use the parse result to send it for the logging
 
 // Warning: Do not use this function alone (doesn't handle the files)
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
@@ -129,10 +125,10 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&response);
 
-	// Adding replay name to headers
+	// Set header
 	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
-
-	//(Verbose mode)
+	
+	// Verbose mode
 	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
 
 	if(curl_easy_perform(handle) != CURLE_OK)
@@ -140,8 +136,8 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 		printf("\n[!] Unable to upload [%s]\n", name);
 		current.state = FAILURE;
 	}
-	printf("%lu bytes retrieved\n", (unsigned long)response.size);
-	printf("\n[MESSAGE] %s\n", response.memory);
+	printf("\n[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
+	printf("[MESSAGE] %s\n", response.memory);
 
 	curl_slist_free_all(list);
 	curl_easy_cleanup(handle);
@@ -152,7 +148,6 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	current.upload_date = time(NULL);
 	current.state = SUCCESS;
 	strcpy_s(current.response, MAX_RESPONSE, response.memory);
-
 
 	free(response.memory);
 
@@ -173,9 +168,9 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 	cJSON *json = cJSON_CreateObject();
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
 
-	//maybe a for could be better
-	while((entry = readdir(rep_dir)) 	&& rep_count < 10)
-	// strcmp(entry->d_name,".") != 0 		&& strcmp(entry->d_name, "..") != 0)
+
+	// TODO: Check that the filename isn't "." or ".."
+	while((entry = readdir(rep_dir)) && rep_count < 10)
 	{
 		char rep_path[MAX_PATH];
 		strcpy_s(rep_path, MAX_PATH, dir_rt);
@@ -214,7 +209,6 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 	
 	return output;
 }
-
 
 
 //						Debug mode								//
