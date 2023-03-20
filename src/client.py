@@ -66,7 +66,7 @@ class AppGUI(App):
 		self.sidebar = ct.CTkFrame(self, corner_radius=0)
 		self.sidebar.grid(row=0, column=0, rowspan=5, sticky="nsew")
 		self.sidebar.grid_rowconfigure(0, weight=1)
-		self.sidebar.grid_rowconfigure((1,2), weight=2)
+		self.sidebar.grid_rowconfigure((1,2), weight=1)
 		self.sidebar.grid_rowconfigure(3, weight=2)
 
 		self.logo = ct.CTkImage(img.open(f"{getcwd()}/img/logo.png"), size=(40, 40))
@@ -77,12 +77,12 @@ class AppGUI(App):
 		self.user = ct.CTkImage(img.open(f"{getcwd()}/img/user.png"), size=(20,20))
 		self.user_button = ct.CTkButton(self.sidebar, image=self.user, text="Username", fg_color="transparent", 
 				command=self.get_username, hover=False, font=ct.CTkFont(size=14, weight="bold"))
-		self.user_button.grid(row=1, column=0)
+		self.user_button.grid(row=1, column=0, pady=50)
 		
 		self.dir = ct.CTkImage(img.open(f"{getcwd()}/img/dir.png"), size=(20,20))
-		self.inputb = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
+		self.replays_input = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
 				fg_color="transparent", image=self.dir, hover=False, font=ct.CTkFont(size=14, weight="bold"))
-		self.inputb.grid(row=2, column=0)
+		self.replays_input.grid(row=2, column=0)
 
 		#	----	UPPERBAR	----	#
 		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=30)
@@ -94,8 +94,6 @@ class AppGUI(App):
 		self.welcome.grid(row=0, column=0)
 
 		#	----	REPLAYS FRAME	----	#
-		#	Here will be displayed last 3 uploaded replays, which will
-		#	be clickable and will take to the link of the analyzed replay
 		self.tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(20,20))
 		self.replays_list = {}
 		
