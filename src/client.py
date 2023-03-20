@@ -12,6 +12,9 @@ class App(ct.CTk):
 		
 		self.set_handle = files.Settings()
 		self.log_handle = files.Logs()
+		self.settings = self.set_handle.get()
+
+		print(self.set_handle.get()["Username"])
 
 	def get_last_replays(self):
 		logs = self.log_handle.get()
@@ -29,17 +32,16 @@ class App(ct.CTk):
 
 	def get_replays_dir(self):
 		folder = filedialog.askdirectory()
-		print(folder)
-
+		self.set_handle.update("ReplaysDir", folder)
+		return folder
 
 	def get_username(self):
 		dialog = ct.CTkInputDialog(text="Insert your username:", title="")
 		dialog.overrideredirect(True)
 		player_name = dialog.get_input()
 		self.welcome.configure(text="Welcome, " + player_name)
-		
-		# # Write player name in the file
-		# self.settings.update("Name", player_name)
+		self.set_handle.update("Username", player_name)
+		return player_name
 
 	def open_replay(self, link):
 		webbrowser.open(link, new=1)
@@ -65,21 +67,21 @@ class AppGUI(App):
 		self.sidebar.grid(row=0, column=0, rowspan=5, sticky="nsew")
 		self.sidebar.grid_rowconfigure(0, weight=1)
 		self.sidebar.grid_rowconfigure((1,2), weight=2)
-		self.sidebar.grid_rowconfigure(3, weight=5)
+		self.sidebar.grid_rowconfigure(3, weight=2)
 
 		self.logo = ct.CTkImage(img.open(f"{getcwd()}/img/logo.png"), size=(40, 40))
 		self.main_title = ct.CTkLabel(self.sidebar, text=" Sc2Sensei", image=self.logo, compound="left",
-				font=ct.CTkFont(size=22, weight="bold"))
-		self.main_title.grid(row=0, column=0, padx=20, pady=35)
+				font=ct.CTkFont(size=28, weight="bold"))
+		self.main_title.grid(row=0, column=0, padx=25, pady=10)
 
-		self.home = ct.CTkImage(img.open(f"{getcwd()}/img/home.png"), size=(20,20))
-		self.home_button = ct.CTkButton(self.sidebar, image=self.home, text="Home", fg_color="transparent", 
-				command=self.get_username, hover=False)
-		self.home_button.grid(row=1, column=0)
+		self.user = ct.CTkImage(img.open(f"{getcwd()}/img/user.png"), size=(20,20))
+		self.user_button = ct.CTkButton(self.sidebar, image=self.user, text="Username", fg_color="transparent", 
+				command=self.get_username, hover=False, font=ct.CTkFont(size=14, weight="bold"))
+		self.user_button.grid(row=1, column=0)
 		
 		self.dir = ct.CTkImage(img.open(f"{getcwd()}/img/dir.png"), size=(20,20))
 		self.inputb = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
-				fg_color="transparent", image=self.dir, hover=False)
+				fg_color="transparent", image=self.dir, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.inputb.grid(row=2, column=0)
 
 		#	----	UPPERBAR	----	#
@@ -88,7 +90,7 @@ class AppGUI(App):
 		self.upperbar.grid_rowconfigure(0, weight=1)
 		self.upperbar.grid_columnconfigure(0, weight=1)
 
-		self.welcome = ct.CTkLabel(self.upperbar, height=90, text="ciao")
+		self.welcome = ct.CTkLabel(self.upperbar, height=90, text=f"Welcome, {self.settings['Username']}")
 		self.welcome.grid(row=0, column=0)
 
 		#	----	REPLAYS FRAME	----	#
@@ -102,12 +104,4 @@ class AppGUI(App):
 			replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image=self.tick, 
 				command=lambda: self.open_replay("https://sc2sensei.top/"), hover=False)
 			
-
 			replay.grid(row=i+1, column=1)
-			
-			# TODO: Add links to the logging, so I can get them with get_last_replays() and put them in open_replay() 
-
-
-		# self.replay_info = ct.CTkButton(self, image=self.tick, text="Replay", fg_color="transparent", 
-		# 		command=self.get_input, hover=False)
-		# self.replay_info.grid(row=2, column=1)

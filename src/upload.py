@@ -37,6 +37,3 @@ class AutoUploader:
 				print("There was an error.")
 
 			time.sleep(10)
-	
-	def stop(self):
-		self.run = False
