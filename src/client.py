@@ -3,6 +3,8 @@ from PIL import Image as img
 from os import getcwd
 import src.files as files
 import webbrowser
+import tkinter as tk
+from tkinter import filedialog
 
 class App(ct.CTk):
 	def __init__(self):
@@ -20,19 +22,24 @@ class App(ct.CTk):
 		last.append(reverse[0])
 		if len(logs["Replays"]) == 2:
 			last.append(reverse[1])
-		else:
+		elif len(logs["Replays"]) == 3:
 			last.append(reverse[2])
 
 		return last
 
-	def get_input(self):
-		dialog = ct.CTkInputDialog(text="Type in a number:", title="")
+	def get_replays_dir(self):
+		folder = filedialog.askdirectory()
+		print(folder)
+
+
+	def get_username(self):
+		dialog = ct.CTkInputDialog(text="Insert your username:", title="")
 		dialog.overrideredirect(True)
 		player_name = dialog.get_input()
 		self.welcome.configure(text="Welcome, " + player_name)
 		
-		# Write player name in the file
-		self.settings.update("Name", player_name)
+		# # Write player name in the file
+		# self.settings.update("Name", player_name)
 
 	def open_replay(self, link):
 		webbrowser.open(link, new=1)
@@ -49,14 +56,16 @@ class AppGUI(App):
 		self.iconbitmap(default=f"{getcwd()}/img/logo.ico")
 		
 		self.grid_rowconfigure(0, weight=1)
-		self.grid_rowconfigure((1,4), weight=10)
-		self.grid_columnconfigure(1, weight=1)
+		self.grid_rowconfigure((1,3), weight=10)
+		self.grid_columnconfigure(0, weight=1)
+		self.grid_columnconfigure(1, weight=20)
 
 		#	----	SIDEBAR		----	#
 		self.sidebar = ct.CTkFrame(self, corner_radius=0)
 		self.sidebar.grid(row=0, column=0, rowspan=5, sticky="nsew")
-		self.sidebar.grid_rowconfigure(1, weight=1)
-		self.sidebar.grid_rowconfigure((2,5), weight=2)
+		self.sidebar.grid_rowconfigure(0, weight=1)
+		self.sidebar.grid_rowconfigure((1,2), weight=2)
+		self.sidebar.grid_rowconfigure(3, weight=5)
 
 		self.logo = ct.CTkImage(img.open(f"{getcwd()}/img/logo.png"), size=(40, 40))
 		self.main_title = ct.CTkLabel(self.sidebar, text=" Sc2Sensei", image=self.logo, compound="left",
@@ -65,15 +74,17 @@ class AppGUI(App):
 
 		self.home = ct.CTkImage(img.open(f"{getcwd()}/img/home.png"), size=(20,20))
 		self.home_button = ct.CTkButton(self.sidebar, image=self.home, text="Home", fg_color="transparent", 
-				command=self.get_input, hover=False)
+				command=self.get_username, hover=False)
 		self.home_button.grid(row=1, column=0)
 		
-		self.inputb = ct.CTkButton(self, text="Open CTkInputDialog", command=self.get_input)
-		self.inputb.grid(row=2, column=0, padx=20, pady=(10, 10))
+		self.dir = ct.CTkImage(img.open(f"{getcwd()}/img/dir.png"), size=(20,20))
+		self.inputb = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
+				fg_color="transparent", image=self.dir, hover=False)
+		self.inputb.grid(row=2, column=0)
 
 		#	----	UPPERBAR	----	#
-		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=90)
-		self.upperbar.grid(row=0, column=1, columnspan=5, sticky="nsew")
+		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=30)
+		self.upperbar.grid(row=0, column=1, columnspan=3, sticky="nsew")
 		self.upperbar.grid_rowconfigure(0, weight=1)
 		self.upperbar.grid_columnconfigure(0, weight=1)
 

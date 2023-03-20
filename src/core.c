@@ -93,8 +93,8 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	response.size = 0;
 
 	char replay_name[MAX_PATH + 10] = "name: ";
-	char player_name[40] = "user_id: ";
-	char player_id[] = "6412fd5f19e788cc8e91e20d";
+	char player_name[40] = "username: ";
+	char player_id[] = "gengiskhan";
 	strcat_s(replay_name, sizeof(replay_name), name);
 	strcat_s(player_name, sizeof(player_name), player_id);
 
@@ -147,7 +147,10 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
 	current.state = SUCCESS;
-	strcpy_s(current.response, MAX_RESPONSE, response.memory);
+	if(response.size == 0)
+		strcpy_s(current.response, MAX_RESPONSE, "FAILURE");
+	else
+		strcpy_s(current.response, MAX_RESPONSE, response.memory);
 
 	free(response.memory);
 
@@ -167,7 +170,6 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 
 	cJSON *json = cJSON_CreateObject();
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
-
 
 	// TODO: Check that the filename isn't "." or ".."
 	while((entry = readdir(rep_dir)) && rep_count < 10)
