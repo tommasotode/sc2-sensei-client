@@ -158,19 +158,74 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 }
 
 
+cJSON *get_replay_json(Replay rep)
+{
+	cJSON *replay_object = cJSON_CreateObject();
+	cJSON_AddStringToObject(replay_object, "name", rep.name);
+	cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
+	cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
+	cJSON_AddBoolToObject(replay_object, "success", (cJSON_bool)rep.state);
+	cJSON_AddStringToObject(replay_object, "result", rep.response);
+
+	return replay_object;
+}
+
+__declspec(dllexport) char *upload_last_n(unsigned short number, char dir_rt[MAX_PATH])
+{
+	if(number > 20 || number <= 0)
+	{
+		printf("Invalid replay number");
+		return FAILURE;
+	}
+	DIR *rep_dir = opendir(dir_rt);
+	unsigned short rep_count = 0;
+	char *output;
+	cJSON *json = cJSON_CreateObject();
+	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
+
+
+	struct dirent *entry;
+	while((entry = readdir(rep_dir)) && rep_count < number)
+	{
+		char rep_path[MAX_PATH];
+		strcpy_s(rep_path, MAX_PATH, dir_rt);
+		strcat_s(rep_path, MAX_PATH, "\\");
+		strcat_s(rep_path, MAX_PATH, entry->d_name);
+
+		FILE *replay = fopen(rep_path, "rb");
+		Replay rep = upload_replay(replay, entry->d_name);
+
+		cJSON *replay_obj = get_replay_json(rep);
+
+		cJSON_AddItemToArray(replay_block, replay_obj);
+		fclose(replay);
+		rep_count++;
+
+	}
+	closedir(rep_dir);
+
+	output = cJSON_Print(json);
+	if(output == NULL)
+		perror("\n[JSON] Failure in printing object\n");
+	cJSON_Delete(json);
+
+	return output;
+}
+
+
 // TODO: Try to implement multithreading for uploads
 __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 {
 	char *output = NULL;
-	short rep_count = 0;
+	unsigned short rep_count = 0;
 	struct stat info;
-	struct dirent *entry;
 	DIR *rep_dir = opendir(dir_rt);
 
 	cJSON *json = cJSON_CreateObject();
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
 
-	// TODO: Check that the filename isn't "." or ".."
+	// TODO: Check that the entry filename isn't "." or ".."
+	struct dirent *entry;
 	while((entry = readdir(rep_dir)) && rep_count < 10)
 	{
 		char rep_path[MAX_PATH];
@@ -183,20 +238,21 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 		if(info.st_mtime > old_dt)
 		{
 			Replay rep = upload_replay(replay, entry->d_name);
-			
-			cJSON *replay_object = cJSON_CreateObject();
 
-			cJSON_AddStringToObject(replay_object, "name", rep.name);
-			cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
-			cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
-			cJSON_AddBoolToObject(replay_object, "success", (cJSON_bool)rep.state);
-			cJSON_AddStringToObject(replay_object, "result", rep.response);
 
-			cJSON_AddItemToArray(replay_block, replay_object);
+			// cJSON_AddStringToObject(replay_object, "name", rep.name);
+			// cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
+			// cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
+			// cJSON_AddBoolToObject(replay_object, "success", (cJSON_bool)rep.state);
+			// cJSON_AddStringToObject(replay_object, "result", rep.response);
+
+			cJSON *replay_obj = get_replay_json(rep);
+
+			cJSON_AddItemToArray(replay_block, replay_obj);
 
 		}
 		fclose(replay);
-		rep_count+=1;
+		rep_count++;
 	}
 	closedir(rep_dir);
 	
