@@ -166,7 +166,6 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 	struct stat info;
 	struct dirent *entry;
 	DIR *rep_dir = opendir(dir_rt);
-	check result = SUCCESS;
 
 	cJSON *json = cJSON_CreateObject();
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
@@ -184,8 +183,6 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 		if(info.st_mtime > old_dt)
 		{
 			Replay rep = upload_replay(replay, entry->d_name);
-			if(rep.state == FAILURE)
-				result = FAILURE;
 			
 			cJSON *replay_object = cJSON_CreateObject();
 
@@ -202,18 +199,16 @@ __declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
 		rep_count+=1;
 	}
 	closedir(rep_dir);
-	cJSON_AddBoolToObject(json, "success", (cJSON_bool)result);
 	
 	output = cJSON_Print(json);
 	if(output == NULL)
-		perror("Failure in printing object");
+		perror("\n[JSON] Failure in printing object\n");
 	cJSON_Delete(json);
 	
 	return output;
 }
 
 
-//						Debug mode								//
 __declspec(dllexport) check debug_mode()
 {
 	short mode;
