@@ -81,13 +81,12 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 	return realsize;
 }
 
-
-// Warning: Do not use this function alone (doesn't handle the files)
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
 {
 	Replay current;
 	struct stat info;
 	fstat(fileno(replay), &info);
+	
 	struct MemoryStruct response;
 	response.memory = malloc(1);
 	response.size = 0;
@@ -109,7 +108,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	{
 		perror("[!] Unable to initialize curl, aborting upload");
 		current.connection = FAILURE;
-		return current;
+		goto cleanup;
 	}
 	// Setting URL to upload to and how
 	curl_easy_setopt(handle, CURLOPT_URL, "localhost:5000/auto_upload");
@@ -135,29 +134,29 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	{
 		printf("\n[!] Unable to upload [%s]\n", name);
 		current.connection = FAILURE;
+		goto cleanup;
 	}
 	printf("\n[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
 	printf("[MESSAGE] %s\n", response.memory);
 
-	curl_slist_free_all(list);
-	curl_easy_cleanup(handle);
-
-	//	Filling replay object
+	// Fill replay log
 	strcpy_s(current.name, MAX_PATH, name);
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
 	current.connection = response.size > 0;
-	
 	if(response.size == 0)
 		strcpy_s(current.parse_rslt, 17, "Connection error");
 	else
 		strcpy_s(current.parse_rslt, response.size, response.memory);
 
+	cleanup:
+	
+	curl_slist_free_all(list);
+	curl_easy_cleanup(handle);
 	free(response.memory);
-
+	
 	return current;
 }
-
 
 cJSON *get_replay_json(Replay rep)
 {
@@ -173,10 +172,8 @@ cJSON *get_replay_json(Replay rep)
 
 char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 {
-
 	cJSON *json = cJSON_CreateObject();
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
-	
 	DIR *rep_dir = opendir(dir_path);
 	struct dirent *entry;
 	unsigned short rep_count = 0;
@@ -235,7 +232,6 @@ __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PA
 	
 	return log;
 }
-
 
 __declspec(dllexport) check debug_mode()
 {
