@@ -9,7 +9,8 @@ class FileHandle:
 			return json.loads(content)
 		except Exception as e:
 			print(f"Corrupted file: {e}")
-			return None
+		
+		return None
 		
 	def set(self, data):
 		with open(self.path, "w") as file:
@@ -35,3 +36,18 @@ class Logs(FileHandle):
 			new_log["Replays"].append(replay)
 		with open(self.path, "w") as file:
 			json.dump(new_log, file, indent=2)
+
+	def get_last_replays(self, quantity=3):
+		logs = self.get()
+		result = []
+		if quantity > 5 or quantity < 1:
+			print("Invalid number of replays [VALID = 1-5]")
+			return None
+		elif quantity > len(logs["Replays"]):
+			print("Not enought replays in the logs")
+		
+		for i in range(quantity):
+			# how to get the elements independently of the size?
+			result.append(logs["Replays"][-i])
+
+		
