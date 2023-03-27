@@ -13,8 +13,7 @@
 #define SUCCESS 1
 #define FAILURE 0
 
-#define MAX_UP 10
-#define MAX_RESPONSE 100
+#define MAX_UP 20
 
 typedef unsigned char check;
 typedef struct Replay
@@ -22,12 +21,8 @@ typedef struct Replay
 	char name[MAX_PATH];
 	time_t play_date;
 	time_t upload_date;
-	check state;
-	char response[MAX_RESPONSE];
-	//	Add received link (id) example (i only need id)
-	//	https://sc2sensei.top/replay_analysis?replay_id=640cec904126b7a866b97cd9
-
-	//	Add parsing result from the server
+	check connection;
+	char *parse_rslt;
 } Replay;
 
 struct MemoryStruct
@@ -36,12 +31,15 @@ struct MemoryStruct
 	size_t size;
 };
 
-check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
-void wrt_file_date(char dat_rt[MAX_PATH], time_t date);
-time_t get_file_date(char dat_rt[MAX_PATH]);
-time_t get_dir_date(char dir_rt[MAX_PATH]);
-Replay upload_replay(FILE *replay, char name[MAX_PATH]);
-char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH]);
-check debug_mode();
+// Only exportable  and safe functions
+// (Do not use functions alone if they aren't here)
+__declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
+__declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date);
+__declspec(dllexport) time_t get_file_date(char dat_rt[MAX_PATH]);
+__declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH]);
+__declspec(dllexport) char *upload_last_n(unsigned short number, char dir_path[MAX_PATH]);
+__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH]);
+__declspec(dllexport) check debug_mode();
+
 
 #endif

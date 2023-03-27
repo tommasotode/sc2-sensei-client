@@ -1,16 +1,16 @@
 #include "include/core.h"
 
-__declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH])
+__declspec(dllexport) check check_files(char dat_path[MAX_PATH], char dir_path[MAX_PATH])
 {
 	check state = SUCCESS;
 	FILE *datcheck;
 	DIR *dircheck;
-	if(!(datcheck = fopen(dat_rt, "rb")))
+	if(!(datcheck = fopen(dat_path, "rb")))
 	{
 		perror("[!] Unable to open data file");
 		state = FAILURE;
 	}
-	if(!(dircheck = opendir(dir_rt)))
+	if(!(dircheck = opendir(dir_path)))
 	{
 		perror("[!] Unable to open replays directory");
 		state = FAILURE;
@@ -21,26 +21,26 @@ __declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_P
 	return state;
 }
 
-__declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date)
+__declspec(dllexport) void wrt_file_date(char dat_path[MAX_PATH], time_t date)
 {
-	FILE *data_file = fopen(dat_rt, "wb");
+	FILE *data_file = fopen(dat_path, "wb");
 	fwrite(&date, sizeof(time_t), 1, data_file);
 	fclose(data_file);
 }
 
-__declspec(dllexport) time_t get_file_date(char dat_rt[MAX_PATH])
+__declspec(dllexport) time_t get_file_date(char dat_path[MAX_PATH])
 {
 	time_t output;
-	FILE *datf = fopen(dat_rt, "rb");
+	FILE *datf = fopen(dat_path, "rb");
 	fread(&output, sizeof(time_t), 1, datf);
 	fclose(datf);
 	
 	return output;
 }
 
-__declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH])
+__declspec(dllexport) time_t get_dir_date(char dir_path[MAX_PATH])
 {
-	DIR *repl_dir = opendir(dir_rt);
+	DIR *repl_dir = opendir(dir_path);
 	readdir(repl_dir);
 	time_t output = repl_dir -> dd_dta.time_write;
 	closedir(repl_dir);
@@ -108,7 +108,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	if(!handle)
 	{
 		perror("[!] Unable to initialize curl, aborting upload");
-		current.state = FAILURE;
+		current.connection = FAILURE;
 		return current;
 	}
 	// Setting URL to upload to and how
@@ -134,7 +134,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	if(curl_easy_perform(handle) != CURLE_OK)
 	{
 		printf("\n[!] Unable to upload [%s]\n", name);
-		current.state = FAILURE;
+		current.connection = FAILURE;
 	}
 	printf("\n[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
 	printf("[MESSAGE] %s\n", response.memory);
@@ -146,11 +146,12 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	strcpy_s(current.name, MAX_PATH, name);
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
-	current.state = SUCCESS;
+	current.connection = response.size > 0;
+	
 	if(response.size == 0)
-		strcpy_s(current.response, MAX_RESPONSE, "FAILURE");
+		strcpy_s(current.parse_rslt, 17, "Connection error");
 	else
-		strcpy_s(current.response, MAX_RESPONSE, response.memory);
+		strcpy_s(current.parse_rslt, response.size, response.memory);
 
 	free(response.memory);
 
@@ -164,104 +165,75 @@ cJSON *get_replay_json(Replay rep)
 	cJSON_AddStringToObject(replay_object, "name", rep.name);
 	cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
 	cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
-	cJSON_AddBoolToObject(replay_object, "success", (cJSON_bool)rep.state);
-	cJSON_AddStringToObject(replay_object, "result", rep.response);
+	cJSON_AddBoolToObject(replay_object, "connection", (cJSON_bool)rep.connection);
+	cJSON_AddStringToObject(replay_object, "parse_rslt", rep.parse_rslt);
 
 	return replay_object;
 }
 
-__declspec(dllexport) char *upload_last_n(unsigned short number, char dir_rt[MAX_PATH])
+char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 {
-	if(number > 20 || number <= 0)
-	{
-		printf("Invalid replay number");
-		return FAILURE;
-	}
-	DIR *rep_dir = opendir(dir_rt);
-	unsigned short rep_count = 0;
-	char *output;
-	cJSON *json = cJSON_CreateObject();
-	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
-
-
-	struct dirent *entry;
-	while((entry = readdir(rep_dir)) && rep_count < number)
-	{
-		char rep_path[MAX_PATH];
-		strcpy_s(rep_path, MAX_PATH, dir_rt);
-		strcat_s(rep_path, MAX_PATH, "\\");
-		strcat_s(rep_path, MAX_PATH, entry->d_name);
-
-		FILE *replay = fopen(rep_path, "rb");
-		Replay rep = upload_replay(replay, entry->d_name);
-
-		cJSON *replay_obj = get_replay_json(rep);
-
-		cJSON_AddItemToArray(replay_block, replay_obj);
-		fclose(replay);
-		rep_count++;
-
-	}
-	closedir(rep_dir);
-
-	output = cJSON_Print(json);
-	if(output == NULL)
-		perror("\n[JSON] Failure in printing object\n");
-	cJSON_Delete(json);
-
-	return output;
-}
-
-
-// TODO: Try to implement multithreading for uploads
-__declspec(dllexport) char *upload_all_new(time_t old_dt, char dir_rt[MAX_PATH])
-{
-	char *output = NULL;
-	unsigned short rep_count = 0;
-	struct stat info;
-	DIR *rep_dir = opendir(dir_rt);
 
 	cJSON *json = cJSON_CreateObject();
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
-
-	// TODO: Check that the entry filename isn't "." or ".."
+	
+	DIR *rep_dir = opendir(dir_path);
 	struct dirent *entry;
-	while((entry = readdir(rep_dir)) && rep_count < 10)
+	unsigned short rep_count = 0;
+	while((entry = readdir(rep_dir)) && rep_count < max)
 	{
+		//	TODO: Add check for "." and ".."
+		//	TODO: Add multithreading for uploads (optional)
+
 		char rep_path[MAX_PATH];
-		strcpy_s(rep_path, MAX_PATH, dir_rt);
+		strcpy_s(rep_path, MAX_PATH, dir_path);
 		strcat_s(rep_path, MAX_PATH, "\\");
 		strcat_s(rep_path, MAX_PATH, entry->d_name);
-		
+
+		struct stat info;
 		FILE *replay = fopen(rep_path, "rb");
 		fstat(fileno(replay), &info);
-		if(info.st_mtime > old_dt)
+		if(info.st_mtime > old_date)
 		{
+			// Upload and log
+			
 			Replay rep = upload_replay(replay, entry->d_name);
-
-
-			// cJSON_AddStringToObject(replay_object, "name", rep.name);
-			// cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
-			// cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
-			// cJSON_AddBoolToObject(replay_object, "success", (cJSON_bool)rep.state);
-			// cJSON_AddStringToObject(replay_object, "result", rep.response);
-
 			cJSON *replay_obj = get_replay_json(rep);
-
 			cJSON_AddItemToArray(replay_block, replay_obj);
-
 		}
 		fclose(replay);
 		rep_count++;
 	}
 	closedir(rep_dir);
-	
-	output = cJSON_Print(json);
-	if(output == NULL)
+
+	char *log;
+	log = cJSON_Print(json);
+	if(log == NULL)
 		perror("\n[JSON] Failure in printing object\n");
 	cJSON_Delete(json);
+
+	return log;
+}
+
+__declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PATH])
+{
+	if(n > 20 || n < 1)
+	{
+		printf("Invalid replay number (VALID 1 - 20)");
+		return NULL;
+	}
+	char *log = upload_group(n, 0, dir_path);
 	
-	return output;
+	return log;
+}
+
+__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH])
+{
+	if(old_date <= 0)
+		printf("[WARNING] Old date <= 0");
+	char *log = upload_group(MAX_UP, old_date, dir_path);
+	
+	return log;
 }
 
 
@@ -284,11 +256,14 @@ __declspec(dllexport) check debug_mode()
 			fclose(rep);
 			return FAILURE;
 		}
-		if(upload_replay(rep, name).state == FAILURE)
+		Replay result = upload_replay(rep, name);
+		if(result.connection == FAILURE)
 		{
 			perror("Failed to upload the replay");
 			return FAILURE;
 		}
+		printf("%s", result.parse_rslt);
+
 		fclose(rep);
 	}	
 	
