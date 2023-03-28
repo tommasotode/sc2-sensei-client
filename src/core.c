@@ -256,6 +256,7 @@ __declspec(dllexport) check debug_mode()
 		if(result.connection == FAILURE)
 		{
 			perror("Failed to upload the replay");
+			fclose(rep);
 			return FAILURE;
 		}
 		printf("%s", result.parse_rslt);

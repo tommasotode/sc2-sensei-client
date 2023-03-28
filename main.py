@@ -4,15 +4,13 @@ import threading
 
 if __name__ == "__main__":
 	app = client.AppGUI()
+	uploader = up.Uploader("C:/repos/Sc2SenseiClient/ReplayTest")
 	
-	uploader = up.AutoUploader("C:/repos/Sc2SenseiClient/ReplayTest", True)
+	# If the necessary files aren't found
 	if uploader == None:
 		exit()
 
-	# TODO: Put settings here and interface it with the gui
-
-
-	up_thread = threading.Thread(target=uploader.start)
+	up_thread = threading.Thread(target=uploader.start_auto_uploader)
 	up_thread.start()
 
 	# Must be in the main thread
