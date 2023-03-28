@@ -12,17 +12,19 @@
 
 #define SUCCESS 1
 #define FAILURE 0
-
 #define MAX_UP 20
+#define ID_LEN 24
+#define MAX_RESPONSE 80
 
 typedef unsigned char check;
 typedef struct Replay
 {
 	char name[MAX_PATH];
+	char id[ID_LEN];
 	time_t play_date;
 	time_t upload_date;
 	check connection;
-	char *parse_rslt;
+	char parse_rslt[100];
 } Replay;
 
 struct MemoryStruct

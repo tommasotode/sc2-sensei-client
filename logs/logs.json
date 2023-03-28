@@ -1,3 +1,46 @@
 {
-  "Replays": []
+  "Replays": [
+    {
+      "name": "Ancient Cistern LE (16).SC2Replay",
+      "play_date": 1678744565,
+      "upload_date": 1679999195,
+      "connection": true,
+      "parse_rslt": ""
+    },
+    {
+      "name": "Babylon LE (13).SC2Replay",
+      "play_date": 1678744565,
+      "upload_date": 1679999199,
+      "connection": true,
+      "parse_rslt": ""
+    },
+    {
+      "name": "Dragon Scales LE (11).SC2Replay",
+      "play_date": 1678744565,
+      "upload_date": 1679999205,
+      "connection": true,
+      "parse_rslt": ""
+    },
+    {
+      "name": "Ancient Cistern LE (16).SC2Replay",
+      "play_date": 1678744565,
+      "upload_date": 1680000016,
+      "connection": true,
+      "parse_rslt": "{\"parse\": \"Success\", \"replay_id\": \"64213c30442b0fd478cdfd1f\"}"
+    },
+    {
+      "name": "Babylon LE (13).SC2Replay",
+      "play_date": 1678744565,
+      "upload_date": 1680000020,
+      "connection": true,
+      "parse_rslt": "{\"parse\": \"Replay is too short\", \"replay_id\": null}"
+    },
+    {
+      "name": "Dragon Scales LE (11).SC2Replay",
+      "play_date": 1678744565,
+      "upload_date": 1680000025,
+      "connection": true,
+      "parse_rslt": "{\"parse\": \"Success\", \"replay_id\": \"64213fde442b0fd478cdff82\"}"
+    }
+  ]
 }

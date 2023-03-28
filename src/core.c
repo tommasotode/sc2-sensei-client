@@ -106,7 +106,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
-		perror("[!] Unable to initialize curl, aborting upload");
+		perror("[!] Unable to initialize curl, aborting upload\n");
 		current.connection = FAILURE;
 		goto cleanup;
 	}
@@ -139,20 +139,31 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	printf("\n[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
 	printf("[MESSAGE] %s\n", response.memory);
 
+
+
+	//split response memory with json
+
+
+	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
+	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
+	const cJSON *replay_id = cJSON_GetObjectItem(response_json, "replay_id");
+
 	// Fill replay log
 	strcpy_s(current.name, MAX_PATH, name);
+	strcpy_s(current.id, ID_LEN, replay_id->valuestring);
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
 	current.connection = response.size > 0;
 	if(response.size == 0)
 		strcpy_s(current.parse_rslt, 17, "Connection error");
 	else
-		strcpy_s(current.parse_rslt, response.size, response.memory);
+		strcpy_s(current.parse_rslt, MAX_RESPONSE, parse->valuestring);
 
 	cleanup:
 	
 	curl_slist_free_all(list);
 	curl_easy_cleanup(handle);
+	cJSON_Delete(response_json);
 	free(response.memory);
 	
 	return current;
@@ -162,10 +173,11 @@ cJSON *get_replay_json(Replay rep)
 {
 	cJSON *replay_object = cJSON_CreateObject();
 	cJSON_AddStringToObject(replay_object, "name", rep.name);
+	cJSON_AddStringToObject(replay_object, "id", rep.id);
 	cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
 	cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
 	cJSON_AddBoolToObject(replay_object, "connection", (cJSON_bool)rep.connection);
-	cJSON_AddStringToObject(replay_object, "parse_rslt", rep.parse_rslt);
+	cJSON_AddStringToObject(replay_object, "parse", rep.parse_rslt);
 
 	return replay_object;
 }
@@ -192,8 +204,6 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 		fstat(fileno(replay), &info);
 		if(info.st_mtime > old_date)
 		{
-			// Upload and log
-			
 			Replay rep = upload_replay(replay, entry->d_name);
 			cJSON *replay_obj = get_replay_json(rep);
 			cJSON_AddItemToArray(replay_block, replay_obj);
@@ -216,7 +226,7 @@ __declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PA
 {
 	if(n > 20 || n < 1)
 	{
-		printf("Invalid replay number (VALID 1 - 20)");
+		printf("Invalid replay number (VALID 1 - 20)\n");
 		return NULL;
 	}
 	char *log = upload_group(n, 0, dir_path);
@@ -227,7 +237,7 @@ __declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PA
 __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH])
 {
 	if(old_date <= 0)
-		printf("[WARNING] Old date <= 0");
+		printf("[WARNING] Old date <= 0\n");
 	char *log = upload_group(MAX_UP, old_date, dir_path);
 	
 	return log;
