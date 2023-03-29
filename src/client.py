@@ -12,6 +12,7 @@ class App(ct.CTk):
 		super().__init__()
 		self.set_handle = files.Settings()
 		self.log_handle = files.Logs()
+		self.settings = self.set_handle.get()
 
 	def get_replays_dir(self):
 		folder = filedialog.askdirectory()
