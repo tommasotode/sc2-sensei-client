@@ -8,6 +8,6 @@ dev:
 prod:
 	cc -fPIC -c src/core.c -o bin/core.o -I src/include -O2
 	cc -fPIC -c src/cJSON.c -o bin/cJSON.o -I src/include -O2
-	cc -shared -o bin/core.so bin/cJSON.o -L lib/curl/lib -lcurl
+	cc -shared -o bin/core.so bin/core.o bin/cJSON.o -L lib/curl/lib -lcurl
 
 	del bin\core.o bin\cJSON.o
