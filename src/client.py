@@ -6,7 +6,6 @@ import webbrowser
 import tkinter as tk
 from tkinter import filedialog
 
-
 class App(ct.CTk):
 	def __init__(self):
 		super().__init__()
@@ -29,7 +28,6 @@ class App(ct.CTk):
 
 	def open_replay_browser(self, link):
 		webbrowser.open(link, new=1)
-
 
 class AppGUI(App):
 	def __init__(self):

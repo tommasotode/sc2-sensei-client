@@ -16,7 +16,6 @@ class FileHandle:
 		with open(self.path, "w") as file:
 			json.dump(data, file, indent=2)
 
-
 class Settings(FileHandle):
 	def __init__(self):
 		self.path = f"{os.getcwd()}/data/settings.json"

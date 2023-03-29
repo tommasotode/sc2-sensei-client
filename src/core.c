@@ -42,7 +42,7 @@ __declspec(dllexport) time_t get_dir_date(char dir_path[MAX_PATH])
 {
 	DIR *repl_dir = opendir(dir_path);
 	readdir(repl_dir);
-	time_t output = repl_dir -> dd_dta.time_write;
+	time_t output = repl_dir->dd_dta.time_write;
 	closedir(repl_dir);
 	
 	return output;
@@ -138,11 +138,6 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	}
 	printf("\n[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
 	printf("[MESSAGE] %s\n", response.memory);
-
-
-
-	//split response memory with json
-
 
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
@@ -249,7 +244,7 @@ __declspec(dllexport) check debug_mode()
 	printf("DEBUG MODE\n\n");
 	printf("0 - Quit\n1 - Upload single replay\n");
 	scanf("%hd", &mode);	
-	if (mode == 1)
+	if(mode == 1)
 	{
 		char path[MAX_PATH];
 		char name[MAX_PATH] = "debug_replay";
@@ -270,7 +265,6 @@ __declspec(dllexport) check debug_mode()
 			return FAILURE;
 		}
 		printf("%s", result.parse_rslt);
-
 		fclose(rep);
 	}	
 	

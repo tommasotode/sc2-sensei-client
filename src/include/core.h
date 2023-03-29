@@ -13,7 +13,7 @@
 #define SUCCESS 1
 #define FAILURE 0
 #define MAX_UP 20
-#define ID_LEN 24
+#define ID_LEN 25
 #define MAX_RESPONSE 80
 
 typedef unsigned char check;
@@ -42,6 +42,5 @@ __declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH]);
 __declspec(dllexport) char *upload_last_n(unsigned short number, char dir_path[MAX_PATH]);
 __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH]);
 __declspec(dllexport) check debug_mode();
-
 
 #endif
