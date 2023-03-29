@@ -46,7 +46,7 @@ class Logs(FileHandle):
 			return None
 		
 		if quantity > len(logs["Replays"]):
-			print(f"[WARNING] Too few logs, returning only {len(logs['Replays'])} replays")
+			print(f"[WARNING] Can only get {len(logs['Replays'])} replays")
 			for i in range(1, len(logs["Replays"])):
 				result.append(logs["Replays"][-i])
 		

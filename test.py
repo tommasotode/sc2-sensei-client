@@ -1,6 +1,8 @@
-import os
-import ctypes as c
+import src.upload as up
+import src.files as files
 
 if __name__ == "__main__":
-	core = c.CDLL(f"{os.getcwd()}/bin/core.so")
-	core.debug_mode()
+	set_handle = files.Settings()
+	replays_path = set_handle.get()["ReplaysDir"]
+	uploader = up.Uploader(replays_path)
+	uploader.start_debug()
