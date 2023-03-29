@@ -16,20 +16,6 @@ class App(ct.CTk):
 
 		print(self.set_handle.get()["Username"])
 
-	def get_last_replays(self):
-		logs = self.log_handle.get()
-		if len(logs["Replays"]) == 0:
-			return None
-		last = []
-		reverse = logs["Replays"][::-1]
-		last.append(reverse[0])
-		if len(logs["Replays"]) == 2:
-			last.append(reverse[1])
-		elif len(logs["Replays"]) == 3:
-			last.append(reverse[2])
-
-		return last
-
 	def get_replays_dir(self):
 		folder = filedialog.askdirectory()
 		self.set_handle.update("ReplaysDir", folder)
@@ -45,6 +31,8 @@ class App(ct.CTk):
 
 	def open_replay(self, link):
 		webbrowser.open(link, new=1)
+
+	
 
 class AppGUI(App):
 	def __init__(self):
@@ -100,6 +88,6 @@ class AppGUI(App):
 		for i in range(3):
 
 			replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image=self.tick, 
-				command=lambda: self.open_replay("https://sc2sensei.top/"), hover=False)
+				command=lambda:self.open_replay("https://sc2sensei.top/"), hover=False)
 			
 			replay.grid(row=i+1, column=1)
