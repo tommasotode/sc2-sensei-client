@@ -187,7 +187,6 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 	while((entry = readdir(rep_dir)) && rep_count < max)
 	{
 		//	TODO: Add check for "." and ".."
-		//	TODO: Add multithreading for uploads (optional)
 
 		char rep_path[MAX_PATH];
 		strcpy_s(rep_path, MAX_PATH, dir_path);

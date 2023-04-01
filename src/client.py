@@ -3,7 +3,6 @@ from PIL import Image as img
 from os import getcwd
 import src.files as files
 import webbrowser
-import tkinter as tk
 from tkinter import filedialog
 import functools
 
