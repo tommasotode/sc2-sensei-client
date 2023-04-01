@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 class FileHandle:
 	def get(self):
@@ -44,12 +45,17 @@ class Logs(FileHandle):
 			print("[ERROR] Invalid number of replays (min. 1 max. 5)")
 			return None
 		
+		if len(logs["Replays"]) == 0:
+			print("No replays in the logs")
+			return None
+
 		if quantity > len(logs["Replays"]):
 			print(f"[WARNING] Can only get {len(logs['Replays'])} replays")
 			for i in range(1, len(logs["Replays"])):
 				result.append(logs["Replays"][-i])
 		
-		for i in range(1, quantity):
+		for i in range(1, quantity+1):
 			result.append(logs["Replays"][-i])
 
 		return result
+	
