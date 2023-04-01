@@ -136,7 +136,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 		current.connection = FAILURE;
 		goto cleanup;
 	}
-	printf("\n[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
+	printf("[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
 	printf("[MESSAGE] %s\n", response.memory);
 
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
@@ -186,24 +186,25 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 	unsigned short rep_count = 0;
 	while((entry = readdir(rep_dir)) && rep_count < max)
 	{
-		//	TODO: Add check for "." and ".."
-
-		char rep_path[MAX_PATH];
-		strcpy_s(rep_path, MAX_PATH, dir_path);
-		strcat_s(rep_path, MAX_PATH, "\\");
-		strcat_s(rep_path, MAX_PATH, entry->d_name);
-
-		struct stat info;
-		FILE *replay = fopen(rep_path, "rb");
-		fstat(fileno(replay), &info);
-		if(info.st_mtime > old_date)
+		if(strcmp(entry->d_name, ".") != 0 || strcmp(entry->d_name, "..") != 0)
 		{
-			Replay rep = upload_replay(replay, entry->d_name);
-			cJSON *replay_obj = get_replay_json(rep);
-			cJSON_AddItemToArray(replay_block, replay_obj);
+			char rep_path[MAX_PATH];
+			strcpy_s(rep_path, MAX_PATH, dir_path);
+			strcat_s(rep_path, MAX_PATH, "\\");
+			strcat_s(rep_path, MAX_PATH, entry->d_name);
+
+			struct stat info;
+			FILE *replay = fopen(rep_path, "rb");
+			fstat(fileno(replay), &info);
+			if(info.st_mtime > old_date)
+			{
+				Replay rep = upload_replay(replay, entry->d_name);
+				cJSON *replay_obj = get_replay_json(rep);
+				cJSON_AddItemToArray(replay_block, replay_obj);
+			}
+			fclose(replay);
+			rep_count++;
 		}
-		fclose(replay);
-		rep_count++;
 	}
 	closedir(rep_dir);
 

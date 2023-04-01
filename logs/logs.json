@@ -1,146 +1,42 @@
 {
   "Replays": [
     {
-      "name": "Altitude LE (14).SC2Replay",
-      "id": "642894dd02144927e95b9768",
-      "play_date": 1680380215,
-      "upload_date": 1680381152,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "Altitude LE (15).SC2Replay",
-      "id": "642894e602144927e95b9783",
-      "play_date": 1680380215,
-      "upload_date": 1680381161,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
       "name": "Altitude LE (16).SC2Replay",
       "id": "",
       "play_date": 1680380215,
-      "upload_date": 1680381165,
-      "connection": true,
-      "parse": "Replay is too short"
-    },
-    {
-      "name": "Ancient Cistern LE (17).SC2Replay",
-      "id": "642894fc02144927e95b97ae",
-      "play_date": 1680380215,
-      "upload_date": 1680381230,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "Ancient Cistern LE (18).SC2Replay",
-      "id": "6428953c02144927e95b97fc",
-      "play_date": 1680380215,
-      "upload_date": 1680381299,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "Ancient Cistern LE (19).SC2Replay",
-      "id": "6428958502144927e95b9847",
-      "play_date": 1680380215,
-      "upload_date": 1680381353,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "Ancient Cistern LE (20).SC2Replay",
-      "id": "642895b502144927e95b988c",
-      "play_date": 1680380215,
-      "upload_date": 1680381385,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "Ancient Cistern LE (21).SC2Replay",
-      "id": "",
-      "play_date": 1680380215,
-      "upload_date": 1680381390,
+      "upload_date": 1680384664,
       "connection": true,
       "parse": "Replay is too short"
     },
     {
       "name": "Ancient Cistern LE (22).SC2Replay",
-      "id": "642895e602144927e95b98c7",
+      "id": "6428a2b002144927e95ba841",
       "play_date": 1680380215,
-      "upload_date": 1680381434,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "Babylon LE (14).SC2Replay",
-      "id": "",
-      "play_date": 1680380215,
-      "upload_date": 1680381439,
-      "connection": true,
-      "parse": "Replay is too short"
-    },
-    {
-      "name": "Babylon LE (15).SC2Replay",
-      "id": "6428960502144927e95b98f4",
-      "play_date": 1680380215,
-      "upload_date": 1680381449,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "Babylon LE (16).SC2Replay",
-      "id": "6428961e02144927e95b9916",
-      "play_date": 1680380215,
-      "upload_date": 1680381573,
+      "upload_date": 1680384708,
       "connection": true,
       "parse": "Success"
     },
     {
       "name": "Babylon LE (17).SC2Replay",
-      "id": "642896b202144927e95b99a0",
+      "id": "6428a2f002144927e95ba899",
       "play_date": 1680380215,
-      "upload_date": 1680381628,
+      "upload_date": 1680384762,
       "connection": true,
       "parse": "Success"
     },
     {
-      "name": "Dragon Scales LE (14).SC2Replay",
-      "id": "",
+      "name": "NeoHumanity LE (18).SC2Replay",
+      "id": "6428a30902144927e95ba8d4",
       "play_date": 1680380216,
-      "upload_date": 1680381633,
-      "connection": true,
-      "parse": "Replay is too short"
-    },
-    {
-      "name": "Dragon Scales LE (15).SC2Replay",
-      "id": "642896cd02144927e95b99cc",
-      "play_date": 1680380216,
-      "upload_date": 1680381682,
+      "upload_date": 1680384820,
       "connection": true,
       "parse": "Success"
     },
     {
-      "name": "Dragon Scales LE (16).SC2Replay",
-      "id": "6428970002144927e95b9a0a",
+      "name": "Royal Blood LE (15).SC2Replay",
+      "id": "6428a33a02144927e95ba919",
       "play_date": 1680380216,
-      "upload_date": 1680381725,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "NeoHumanity LE (16).SC2Replay",
-      "id": "6428972b02144927e95b9a3c",
-      "play_date": 1680380216,
-      "upload_date": 1680381747,
-      "connection": true,
-      "parse": "Success"
-    },
-    {
-      "name": "NeoHumanity LE (17).SC2Replay",
-      "id": "6428973b02144927e95b9a5e",
-      "play_date": 1680380216,
-      "upload_date": 1680381766,
+      "upload_date": 1680384835,
       "connection": true,
       "parse": "Success"
     }
