@@ -5,6 +5,7 @@ import src.files as files
 import webbrowser
 import tkinter as tk
 from tkinter import filedialog
+import functools
 
 class App(ct.CTk):
 	def __init__(self):
@@ -26,15 +27,15 @@ class App(ct.CTk):
 		self.set_handle.update("Username", player_name)
 		return player_name
 
-	def open_replay_browser(self, link):
-		webbrowser.open(link, new=1)
 
 	def set_last_replays(self, replays_list):
 		for i, replay in enumerate(replays_list[::-1]):
-			link = f"https://localhost:5000/replay_analysis?replay_id={replay['id']}"
-			replay = ct.CTkButton(self, text=replay["name"], fg_color="transparent", image=self.tick,
-				command=lambda:(webbrowser.open(link)), hover=False)
-			replay.grid(row=i+1, column=1)
+			link = f"http://localhost:5000/replay_analysis?replay_id={replay['id']}"
+			open_replay = functools.partial(webbrowser.open, url=link)
+			replay_btn = ct.CTkButton(self, text=replay["name"], fg_color="transparent", image=self.tick,
+			    command=open_replay, hover=False)
+			replay_btn.grid(row=i+1, column=1)
+
 
 class AppGUI(App):
 	def __init__(self):
@@ -91,8 +92,4 @@ class AppGUI(App):
 		self.refresh_btn = ct.CTkButton(self, text="", fg_color="transparent", image=self.refresh_img,
 			command=lambda:self.set_last_replays(self.log_handle.get_last_replays(3)))
 
-		self.refresh_img.grid(row=0, column=1)
-		# for i in range(3):
-		# 	replay = ct.CTkButton(self, text=f"prova{i}", fg_color="transparent", image=self.tick,
-		# 		command=lambda: self.open_replay_browser("https://sc2sensei.top/"), hover=False)
-		# 	replay.grid(row=i+1, column=1)
+		self.refresh_btn.grid(row=0, column=1)
