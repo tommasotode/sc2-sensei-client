@@ -20,7 +20,7 @@ class App(ct.CTk):
 		self.set_handle = files.Settings()
 		self.log_handle = files.Logs()
 		self.settings = self.set_handle.get()
-		self.uploader_state = True
+		self.uploader_state = self.set_handle.get()["UploaderState"]
 
 	def get_replays_dir(self):
 		folder = filedialog.askdirectory()
@@ -96,8 +96,9 @@ class AppGUI(App):
 
 		self.play_img = ct.CTkImage(img.open(f"{getcwd()}/img/play.png"), size=(20,20))
 		self.pause_img = ct.CTkImage(img.open(f"{getcwd()}/img/pause.png"), size=(20,20))
+		self.current_state_img = self.pause_img if self.uploader_state else self.play_img
 		self.play_btn = ct.CTkButton(self.sidebar, text="", command=self.toggle_uploader, fg_color="transparent",
-			image=self.pause_img, hover=False, width=40)
+			image=self.current_state_img, hover=False, width=40)
 		self.play_btn.grid(row=3, column=0)
 
 
