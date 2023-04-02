@@ -59,19 +59,19 @@ class AppGUI(App):
 		self.sidebar.grid_rowconfigure((1, 2), weight=1)
 		self.sidebar.grid_rowconfigure(3, weight=2)
 
-		self.logo = ct.CTkImage(img.open(f"{getcwd()}/img/logo.png"), size=(40, 40))
-		self.main_title = ct.CTkLabel(self.sidebar, text=" Sc2Sensei", image=self.logo, compound="left",
-			font=ct.CTkFont(size=28, weight="bold"))
-		self.main_title.grid(row=0, column=0, padx=25, pady=10)
+		self.logo_img = ct.CTkImage(img.open(f"{getcwd()}/img/logo.png"), size=(50, 50))
+		self.main_title = ct.CTkLabel(self.sidebar, text=" Sc2Sensei", image=self.logo_img, compound="left",
+			font=ct.CTkFont(size=29, weight="bold"))
+		self.main_title.grid(row=0, column=0, padx=30)
 
-		self.user = ct.CTkImage(img.open(f"{getcwd()}/img/user.png"), size=(20, 20))
-		self.user_button = ct.CTkButton(self.sidebar, image=self.user, text="Username", fg_color="transparent",
+		self.user_img = ct.CTkImage(img.open(f"{getcwd()}/img/user.png"), size=(20, 20))
+		self.user_button = ct.CTkButton(self.sidebar, image=self.user_img, text="Username", fg_color="transparent",
 			command=self.get_username, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.user_button.grid(row=1, column=0, pady=50)
 
-		self.dir = ct.CTkImage(img.open(f"{getcwd()}/img/dir.png"), size=(20, 20))
+		self.dir_img = ct.CTkImage(img.open(f"{getcwd()}/img/dir.png"), size=(20, 20))
 		self.replays_input = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
-			fg_color="transparent", image=self.dir, hover=False, font=ct.CTkFont(size=14, weight="bold"))
+			fg_color="transparent", image=self.dir_img, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.replays_input.grid(row=2, column=0)
 
 		# ----	UPPERBAR	----	#
@@ -79,16 +79,17 @@ class AppGUI(App):
 		self.upperbar.grid(row=0, column=1, columnspan=3, sticky="nsew")
 		self.upperbar.grid_rowconfigure(0, weight=1)
 		self.upperbar.grid_columnconfigure(0, weight=1)
+		self.upperbar.grid_columnconfigure(1, weight=8)
+		self.upperbar.grid_columnconfigure(2, weight=1)
 
 		self.welcome = ct.CTkLabel(self.upperbar, height=90, text=f"Welcome, {self.settings['Username']}")
-		self.welcome.grid(row=0, column=0)
+		self.welcome.grid(row=0, column=1)
+
+		self.refresh_img = ct.CTkImage(img.open(f"{getcwd()}/img/refresh.png"), size=(20, 20))
+		self.refresh_btn = ct.CTkButton(self.upperbar, text="", fg_color="transparent", image=self.refresh_img,
+			hover=False, width=40, height=40, command=lambda:self.set_last_replays(self.log_handle.get_last_replays(3)))
+		self.refresh_btn.grid(row=0, column=2)
 
 		# ----	REPLAYS FRAME	----	#
 		self.tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(20, 20))
-		self.replays_list = {}
-		
-		self.refresh_img = ct.CTkImage(img.open(f"{getcwd()}/img/refresh.png"), size=(20, 20))
-		self.refresh_btn = ct.CTkButton(self, text="", fg_color="transparent", image=self.refresh_img,
-			command=lambda:self.set_last_replays(self.log_handle.get_last_replays(3)))
-
-		self.refresh_btn.grid(row=0, column=1)
+		self.set_last_replays(self.log_handle.get_last_replays(3))
