@@ -83,7 +83,7 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
 {
-	Replay current;
+
 	struct stat info;
 	fstat(fileno(replay), &info);
 	
@@ -97,6 +97,16 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	strcat_s(replay_name, sizeof(replay_name), name);
 	strcat_s(player_name, sizeof(player_name), player_id);
 
+
+	Replay current;
+	strcpy_s(current.name, MAX_PATH, name);
+	strcpy_s(current.id, ID_LEN, "");
+	strcpy_s(current.parse_rslt, MAX_RESPONSE, "Connection error");
+	current.play_date = info.st_mtime;
+	current.upload_date = time(NULL);
+	current.connection = FAILURE;
+	
+
 	struct curl_slist *list = NULL;
 	list = curl_slist_append(list, replay_name);
 	list = curl_slist_append(list, player_name);
@@ -106,7 +116,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
-		perror("[!] Unable to initialize curl, aborting upload\n");
+		perror("\n[!] Unable to initialize curl, aborting upload\n");
 		current.connection = FAILURE;
 		goto cleanup;
 	}
@@ -136,31 +146,30 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 		current.connection = FAILURE;
 		goto cleanup;
 	}
-	printf("[MESSAGE] %lu bytes retrieved\n", (unsigned long)response.size);
-	printf("[MESSAGE] %s\n", response.memory);
+	printf("[SERVER] %lu bytes retrieved\n", (unsigned long)response.size);
+	printf("[SERVER] %s\n", response.memory);
 
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
 	const cJSON *replay_id = cJSON_GetObjectItem(response_json, "replay_id");
+	cJSON_Delete(response_json);
 
 	// Fill replay log
 	strcpy_s(current.name, MAX_PATH, name);
 	strcpy_s(current.id, ID_LEN, replay_id->valuestring);
 	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
-	current.connection = response.size > 0;
+	current.connection = SUCCESS;
 	if(response.size == 0)
 		strcpy_s(current.parse_rslt, 17, "Connection error");
 	else
 		strcpy_s(current.parse_rslt, MAX_RESPONSE, parse->valuestring);
-
-	cleanup:
 	
+	cleanup:
+
 	curl_slist_free_all(list);
 	curl_easy_cleanup(handle);
-	cJSON_Delete(response_json);
 	free(response.memory);
-	
 	return current;
 }
 
@@ -208,7 +217,7 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 	}
 	closedir(rep_dir);
 
-	char *log;
+	char *log = NULL;
 	log = cJSON_Print(json);
 	if(log == NULL)
 		perror("\n[JSON] Failure in printing object\n");
