@@ -39,22 +39,23 @@ class Logs(FileHandle):
 
 	def get_last_replays(self, quantity=3):
 		logs = self.get()
+		length = len(logs["Replays"])
 		result = []
+		
 		if quantity > 5 or quantity < 1:
 			print("[ERROR] Invalid number of replays (min. 1 max. 5)")
 			return None
 		
-		if len(logs["Replays"]) == 0:
+		if length == 0:
 			print("No replays in the logs")
 			return None
-
-		if quantity > len(logs["Replays"]):
-			print(f"[WARNING] Can only get {len(logs['Replays'])} replays")
-			for i in range(1, len(logs["Replays"])):
+		if quantity > length:
+			print(f"[WARNING] Can only get {length} replays")
+			for i in range(1, length+1):
+				result.append(logs["Replays"][-i])
+		else:
+			for i in range(1, quantity+1):
 				result.append(logs["Replays"][-i])
 		
-		for i in range(1, quantity+1):
-			result.append(logs["Replays"][-i])
-
 		return result
 	

@@ -20,14 +20,12 @@ class Uploader:
 		self.core.get_dir_date.restype = c.c_longlong
 
 	def start_auto_uploader(self):
-		# TODO: Check if there is a better way to make the thread stoppable
 		self.run = True
 		while self.run:
 			if self.set_handle.get()["UploaderState"]:
 
 				old_date = self.core.get_file_date(c.c_char_p(self.data_path))
 				new_date = self.core.get_dir_date(c.c_char_p(self.replays_path))
-
 				if new_date > old_date:
 					print("Directory has been modified\n")
 					json_string = self.core.upload_all_new(c.c_longlong(old_date), c.c_char_p(self.replays_path))
