@@ -1,13 +1,14 @@
 #include "include/core.h"
 
-__declspec(dllexport) check check_files(char dat_path[MAX_PATH], char dir_path[MAX_PATH])
+// TODO: Make a function to create them if they're not found
+__declspec(dllexport) check check_files(char settings_path[MAX_PATH], char dir_path[MAX_PATH])
 {
 	check state = SUCCESS;
-	FILE *datcheck;
+	FILE *setcheck;
 	DIR *dircheck;
-	if(!(datcheck = fopen(dat_path, "rb")))
+	if(!(setcheck = fopen(settings_path, "rb")))
 	{
-		perror("[!] Unable to open data file");
+		perror("[!] Unable to open settings file");
 		state = FAILURE;
 	}
 	if(!(dircheck = opendir(dir_path)))
@@ -15,7 +16,7 @@ __declspec(dllexport) check check_files(char dat_path[MAX_PATH], char dir_path[M
 		perror("[!] Unable to open replays directory");
 		state = FAILURE;
 	}
-	fclose(datcheck);
+	fclose(setcheck);
 	closedir(dircheck);
 	
 	return state;

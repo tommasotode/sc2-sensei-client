@@ -35,18 +35,19 @@ class App(ct.CTk):
 		self.set_handle.update("Username", player_name)
 		return player_name
 
-
 	def set_last_replays(self, replays_list):
-		for i, replay in enumerate(replays_list[::-1]):
-			link = f"http://localhost:5000/replay_analysis?replay_id={replay['id']}"
-			open_replay = functools.partial(webbrowser.open, url=link)
-			replay_btn = ct.CTkButton(self, text=replay["name"], fg_color="transparent", image=self.tick,
-			    command=open_replay, hover=False)
-			replay_btn.grid(row=i+1, column=1)
+		if replays_list:
+			for i, replay in enumerate(replays_list[::-1]):
+				link = f"http://localhost:5000/replay_analysis?replay_id={replay['id']}"
+				open_replay = functools.partial(webbrowser.open, url=link)
+				tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(30, 30))
+				replay_btn = ct.CTkButton(self, text=replay["name"], fg_color="transparent", image=tick,
+					command=open_replay, hover=False, width=400, height=80, font=ct.CTkFont(size=17))
+				replay_btn.grid(row=i+1, column=1)
 
 	def toggle_uploader(self):
 		# This function doesn't automatically start or stop the uploader
-		# It has to be done outside
+		# It has to be done outside (this one only interfaces the GUI)
 		self.uploader_state = not self.uploader_state
 		if self.uploader_state:
 			self.play_btn.configure(image=self.pause_img)
@@ -120,5 +121,4 @@ class AppGUI(App):
 		self.refresh_btn.grid(row=0, column=2)
 
 		# ----	REPLAYS FRAME	----	#
-		self.tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(20, 20))
 		self.set_last_replays(self.log_handle.get_last_replays(3))
