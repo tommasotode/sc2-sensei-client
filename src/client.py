@@ -94,16 +94,19 @@ class AppGUI(App):
 			fg_color="transparent", image=self.dir_img, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.replays_input.grid(row=2, column=0)
 		
-		self.info_frame = ct.CTkFrame(self.sidebar, corner_radius=0, bg_color="transparent", fg_color="transparent")
-		self.info_frame.grid(row=4, column=0)
+		self.info_frame = ct.CTkFrame(self.sidebar, corner_radius=0, fg_color="transparent")
+		self.info_frame.grid(row=5, column=0)
 		self.info_frame.grid_columnconfigure((0,1), weight=1)
 
+		self.source_img = ct.CTkImage(img.open(f"{getcwd()}/img/code.png"), size=(20,20))
+		self.source_btn = ct.CTkButton(self.info_frame, image=self.source_img, text="", fg_color="transparent",
+			hover=False, command=self.get_username, height=40, width=50)
+		self.source_btn.grid(row=0, column=0, padx=20, pady=(0,10))
+
 		self.git_img = ct.CTkImage(img.open(f"{getcwd()}/img/git.png"), size=(20, 20))
-		self.git_btn = ct.CTkButton(self.info_frame, image=self.git_img, text="", fg_color="transparent", bg_color="transparent",
-			hover=False, command=self.get_username, height=40, width=40)
-		self.git_btn.grid(row=0, column=0)
-
-
+		self.git_btn = ct.CTkButton(self.info_frame, image=self.git_img, text="", fg_color="transparent",
+			hover=False, command=self.get_username, height=40, width=50)
+		self.git_btn.grid(row=0, column=1, padx=20, pady=(0,10))
 
 		# ----	UPPERBAR	----	#
 		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=30)
@@ -116,8 +119,6 @@ class AppGUI(App):
 		self.welcome = ct.CTkLabel(self.upperbar, height=90, font=ct.CTkFont(size=18), 
 			text=f"Welcome, {self.settings['Username']}")
 		self.welcome.grid(row=0, column=1, padx=10)
-
-
 
 		self.play_img = ct.CTkImage(img.open(f"{getcwd()}/img/play.png"), size=(20,20))
 		self.pause_img = ct.CTkImage(img.open(f"{getcwd()}/img/pause.png"), size=(20,20))
