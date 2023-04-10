@@ -15,6 +15,9 @@
 #define MAX_UP 20
 #define ID_LEN 25
 #define MAX_RESPONSE 80
+// TODO: Check max name length in SC2
+#define MAX_NAME 40
+
 
 typedef unsigned char check;
 typedef struct Replay

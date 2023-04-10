@@ -248,6 +248,17 @@ __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PA
 	return log;
 }
 
+__declspec(dllexport) check check_username(char name[MAX_NAME])
+{
+	check result;
+
+	// TODO: Create endpoint in the server
+	// Send name to server
+	// If name is valid, return true, else, return false
+
+	return result;
+}
+
 __declspec(dllexport) check debug_mode()
 {
 	short mode;
