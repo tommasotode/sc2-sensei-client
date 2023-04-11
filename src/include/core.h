@@ -18,6 +18,9 @@
 // TODO: Check max name length in SC2
 #define MAX_NAME 40
 
+#define UPLOAD_ENDPOINT "localhost:5000/auto_upload"
+#define USERNAME_ENDPOINT "localhost:5000/usercheck"
+
 
 typedef unsigned char check;
 typedef struct Replay
@@ -36,14 +39,15 @@ struct MemoryStruct
 	size_t size;
 };
 
-// Only exportable  and safe functions
-// (Do not use functions alone if they aren't here)
-__declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
-__declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date);
-__declspec(dllexport) time_t get_file_date(char dat_rt[MAX_PATH]);
-__declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH]);
-__declspec(dllexport) char *upload_last_n(unsigned short number, char dir_path[MAX_PATH]);
-__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH]);
-__declspec(dllexport) check debug_mode();
+Replay upload_replay(FILE *replay, char name[MAX_PATH]);
+short check_username(char username[MAX_NAME]);
+
+// __declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
+// __declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date);
+// __declspec(dllexport) time_t get_file_date(char dat_rt[MAX_PATH]);
+// __declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH]);
+// __declspec(dllexport) char *upload_last_n(unsigned short number, char dir_path[MAX_PATH]);
+// __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH]);
+// __declspec(dllexport) check debug_mode();
 
 #endif
