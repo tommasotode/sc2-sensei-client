@@ -84,49 +84,45 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
 {
-
+	// Unsuccessful replay initialization
+	Replay current;
+	strcpy_s(current.name, MAX_PATH, name);
+	strcpy_s(current.id, ID_LEN, "");
+	strcpy_s(current.parse_rslt, MAX_RESPONSE, "Connection error");
 	struct stat info;
 	fstat(fileno(replay), &info);
-	
+	current.play_date = info.st_mtime;
+	current.upload_date = time(NULL);
+	current.connection = FAILURE;
+
+	// Rsponse initialization
 	struct MemoryStruct response;
 	response.memory = malloc(1);
 	response.size = 0;
 
+	// Header initialization
+	// TODO: Change this name
+	// TODO: Add mimetype to the header
 	char replay_name[MAX_PATH + 10] = "name: ";
 	char player_name[40] = "username: ";
 	char player_id[] = "gengiskhan";
 	strcat_s(replay_name, sizeof(replay_name), name);
 	strcat_s(player_name, sizeof(player_name), player_id);
-
-
-	Replay current;
-	strcpy_s(current.name, MAX_PATH, name);
-	strcpy_s(current.id, ID_LEN, "");
-	strcpy_s(current.parse_rslt, MAX_RESPONSE, "Connection error");
-	current.play_date = info.st_mtime;
-	current.upload_date = time(NULL);
-	current.connection = FAILURE;
-	
-
-	struct curl_slist *list = NULL;
-	list = curl_slist_append(list, replay_name);
-	list = curl_slist_append(list, player_name);
-
-	// TODO: Add mimetype to the header
+	struct curl_slist *header = NULL;
+	header = curl_slist_append(header, replay_name);
+	header = curl_slist_append(header, player_name);
 
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
 		perror("\n[!] Unable to initialize curl, aborting upload\n");
-		current.connection = FAILURE;
 		goto cleanup;
 	}
-	// Setting URL to upload to and how
+
+	// Set upload information and replay to read
 	curl_easy_setopt(handle, CURLOPT_URL, "localhost:5000/auto_upload");
 	curl_easy_setopt(handle, CURLOPT_UPLOAD, 1L);
 	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0);
-
-	// Setting where to read the file from and how
 	curl_easy_setopt(handle, CURLOPT_READDATA, replay);
 	curl_easy_setopt(handle, CURLOPT_READFUNCTION, read_callback);
 	curl_easy_setopt(handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)info.st_size);
@@ -136,41 +132,34 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&response);
 
 	// Set header
-	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, list);
+	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, header);
 	
-	// Verbose mode
 	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
 
 	if(curl_easy_perform(handle) != CURLE_OK)
 	{
 		printf("\n[!] Unable to upload [%s]\n", name);
-		current.connection = FAILURE;
 		goto cleanup;
 	}
-	printf("[SERVER] %lu bytes retrieved\n", (unsigned long)response.size);
-	printf("[SERVER] %s\n", response.memory);
+	printf("[SERVER] %luB, [%s]\n", (unsigned long)response.size, response.memory);
 
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
 	const cJSON *replay_id = cJSON_GetObjectItem(response_json, "replay_id");
 	cJSON_Delete(response_json);
 
-	// Fill replay log
-	strcpy_s(current.name, MAX_PATH, name);
+	// Successful update replay
 	strcpy_s(current.id, ID_LEN, replay_id->valuestring);
-	current.play_date = info.st_mtime;
 	current.upload_date = time(NULL);
 	current.connection = SUCCESS;
-	if(response.size == 0)
-		strcpy_s(current.parse_rslt, 17, "Connection error");
-	else
+	if(response.size != 0)
 		strcpy_s(current.parse_rslt, MAX_RESPONSE, parse->valuestring);
 	
 	cleanup:
-
-	curl_slist_free_all(list);
+	curl_slist_free_all(header);
 	curl_easy_cleanup(handle);
 	free(response.memory);
+	
 	return current;
 }
 
@@ -248,9 +237,18 @@ __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PA
 	return log;
 }
 
-__declspec(dllexport) check check_username(char name[MAX_NAME])
+__declspec(dllexport) short check_username(char name[MAX_NAME])
 {
-	check result;
+	short result;
+
+	CURL *handle = curl_easy_init();
+	if(!handle)
+	{
+		perror("\n[!] Unable to initialize curl, aborting name checking\n");
+		
+	}
+	
+
 
 	// TODO: Create endpoint in the server
 	// Send name to server
