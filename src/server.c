@@ -32,7 +32,6 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 	return realsize;
 }
 
-
 short check_username(char username[MAX_NAME])
 {
 	short result;
@@ -90,7 +89,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	// Header initialization
 	// TODO: Change this name
 	// TODO: Add mimetype to the header
-	char replay_name[MAX_PATH + 10] = "name: ";
+	char replay_name[MAX_PATH + 10] = "replay_name: ";
 	char player_name[40] = "username: ";
 	char player_id[] = "gengiskhan";
 	strcat_s(replay_name, sizeof(replay_name), name);

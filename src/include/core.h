@@ -19,7 +19,7 @@
 #define MAX_NAME 40
 
 #define UPLOAD_ENDPOINT "localhost:5000/auto_upload"
-#define USERNAME_ENDPOINT "localhost:5000/usercheck"
+#define USERNAME_ENDPOINT "localhost:5000/check_username"
 
 
 typedef unsigned char check;
