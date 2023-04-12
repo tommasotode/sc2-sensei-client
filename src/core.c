@@ -116,8 +116,6 @@ __declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PA
 
 __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH])
 {
-	if(old_date <= 0)
-		printf("[WARNING] Old date <= 0\n");
 	char *log = upload_group(MAX_UP, old_date, dir_path);
 	
 	return log;

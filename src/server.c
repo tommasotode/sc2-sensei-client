@@ -34,42 +34,6 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 
 short check_username(char username[MAX_NAME])
 {
-	short result;
-	struct MemoryStruct response;
-	response.memory = malloc(1);
-	response.size = 0;
-
-	struct curl_slist *header = NULL;
-	header = curl_slist_append(header, username);
-
-	CURL *handle = curl_easy_init();
-	if(!handle)
-	{
-		perror("\n[!] Error in curl init, aborting name checking\n");
-		result = -1;
-		goto cleanup;
-	}	
-	curl_easy_setopt(handle, CURLOPT_URL, USERNAME_ENDPOINT);
-	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
-	curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void*)&response);
-
-	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
-	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, header);
-
-	// TODO: Create endpoint in the server
-	// Send name to server
-	// If name is valid, return true, else, return false
-
-	cleanup:
-	curl_slist_free_all(header);
-	curl_easy_cleanup(handle);
-	free(response.memory);
-
-	return result;
-}
-
-int temp(char username[MAX_NAME])
-{
 	struct MemoryStruct response;
 	response.memory = malloc(1);
 	response.size = 0;
@@ -80,10 +44,9 @@ int temp(char username[MAX_NAME])
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
-		perror("\n[!] Error in curl init, aborting name checking\n");	
+		perror("\n[!] Curl init failed\n");	
 		goto cleanup;
 	}
-
 	curl_easy_setopt(handle, CURLOPT_URL, USERNAME_ENDPOINT);
 	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
@@ -94,15 +57,14 @@ int temp(char username[MAX_NAME])
 	CURLcode res = curl_easy_perform(handle);
 	if(res != CURLE_OK)
 	{
-		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+		fprintf(stderr, "[!] Curl perform failed: %s\n", curl_easy_strerror(res));
 		goto cleanup;
 	}
-
 	cleanup:
+	curl_global_cleanup();
 	curl_easy_cleanup(handle);
 	curl_slist_free_all(header);
 	free(response.memory);
-	curl_global_cleanup();
 
 	return 0;
 }
@@ -140,7 +102,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
-		perror("\n[!] Error in curl init, aborting upload\n");
+		perror("\n[!] Curl init failed\n");
 		goto cleanup;
 	}
 	// Set upload information and replay to read
@@ -162,7 +124,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	CURLcode res = curl_easy_perform(handle);
 	if(res != CURLE_OK)
 	{
-		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+		fprintf(stderr, "[!] Curl perform failed: %s\n\n", curl_easy_strerror(res));
 		goto cleanup;
 	}
 	curl_off_t upload_speed, total_time;
@@ -174,7 +136,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 		(unsigned long)(total_time / 1000000),
 		(unsigned long)(total_time % 1000000));
 	
-	printf("Received %luB, \n[%s]\n", (unsigned long)response.size, response.memory);
+	printf("[%luB] - %s\n\n", (unsigned long)response.size, response.memory);
 
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
