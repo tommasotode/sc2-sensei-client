@@ -68,6 +68,45 @@ short check_username(char username[MAX_NAME])
 	return result;
 }
 
+int temp(char username[MAX_NAME])
+{
+	struct MemoryStruct response;
+	response.memory = malloc(1);
+	response.size = 0;
+
+	curl_global_init(CURL_GLOBAL_DEFAULT);
+	struct curl_slist *header = NULL;
+	header = curl_slist_append(header, username);
+	CURL *handle = curl_easy_init();
+	if(!handle)
+	{
+		perror("\n[!] Error in curl init, aborting name checking\n");	
+		goto cleanup;
+	}
+
+	curl_easy_setopt(handle, CURLOPT_URL, USERNAME_ENDPOINT);
+	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
+	curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&response);
+	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, header);
+	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+
+	CURLcode res = curl_easy_perform(handle);
+	if(res != CURLE_OK)
+	{
+		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+		goto cleanup;
+	}
+
+	cleanup:
+	curl_easy_cleanup(handle);
+	curl_slist_free_all(header);
+	free(response.memory);
+	curl_global_cleanup();
+
+	return 0;
+}
+
 Replay upload_replay(FILE *replay, char name[MAX_PATH])
 {
 	// Unsuccessful replay initialization
@@ -107,7 +146,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	// Set upload information and replay to read
 	curl_easy_setopt(handle, CURLOPT_URL, UPLOAD_ENDPOINT);
 	curl_easy_setopt(handle, CURLOPT_UPLOAD, 1L);
-	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0);
+	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(handle, CURLOPT_READDATA, replay);
 	curl_easy_setopt(handle, CURLOPT_READFUNCTION, read_callback);
 	curl_easy_setopt(handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)info.st_size);
@@ -120,12 +159,22 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, header);
 	
 	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
-	if(curl_easy_perform(handle) != CURLE_OK)
+	CURLcode res = curl_easy_perform(handle);
+	if(res != CURLE_OK)
 	{
-		printf("\n[!] Unable to upload [%s]\n", name);
+		fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 		goto cleanup;
 	}
-	printf("[SERVER] %luB, [%s]\n", (unsigned long)response.size, response.memory);
+	curl_off_t upload_speed, total_time;
+	curl_easy_getinfo(handle, CURLINFO_SPEED_UPLOAD_T, &upload_speed);
+	curl_easy_getinfo(handle, CURLINFO_TOTAL_TIME_T, &total_time);
+
+	fprintf(stderr, "Speed: %lu bytes/sec during %lu.%06lu seconds\n",
+		(unsigned long)upload_speed,
+		(unsigned long)(total_time / 1000000),
+		(unsigned long)(total_time % 1000000));
+	
+	printf("Received %luB, \n[%s]\n", (unsigned long)response.size, response.memory);
 
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
