@@ -40,14 +40,9 @@ struct MemoryStruct
 };
 
 Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX_USERNAME]);
-short check_username(char username[MAX_USERNAME]);
-
-// __declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
-// __declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date);
-// __declspec(dllexport) time_t get_file_date(char dat_rt[MAX_PATH]);
-// __declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH]);
-// __declspec(dllexport) char *upload_last_n(unsigned short number, char dir_path[MAX_PATH]);
-// __declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH]);
-// __declspec(dllexport) check debug_mode();
+char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME]);
+size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
+size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp);
+cJSON *get_replay_json(Replay rep);
 
 #endif

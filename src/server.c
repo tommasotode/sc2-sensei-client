@@ -1,37 +1,5 @@
 #include "include/core.h"
 
-size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
-{
-	// read from a file (size specified outside)
-
-	FILE *readhere = (FILE *)userdata;
-	size_t retcode = fread(ptr, size, nmemb, readhere);
-	curl_off_t nread = (curl_off_t)retcode;
-	printf("[CURL] %lli bytes read\n", nread);
-	
-	return retcode;
-}
-
-size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-	// create memory block and put contents in it
-	
-	size_t realsize = size * nmemb;
-	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
-	char *ptr = realloc(mem->memory, mem->size + realsize + 1);
-	if(!ptr)
-	{
-		perror("Not enough memory");
-		return 0;
-	}
-	mem->memory = ptr;
-	memcpy(&(mem->memory[mem->size]), contents, realsize);
-	mem->size = mem->size + realsize;
-	mem->memory[mem->size] = 0;
-
-	return realsize;
-}
-
 short check_username(char username[MAX_USERNAME])
 {
 	struct MemoryStruct response;
@@ -133,7 +101,6 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 		(unsigned long)upload_speed,
 		(unsigned long)(total_time / 1000000),
 		(unsigned long)(total_time % 1000000));
-	
 	printf("[%luB] - %s\n\n", (unsigned long)response.size, response.memory);
 
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
@@ -154,4 +121,44 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	free(response.memory);
 	
 	return current;
+}
+
+char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME])
+{
+	cJSON *json = cJSON_CreateObject();
+	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
+	DIR *rep_dir = opendir(dir_path);
+	struct dirent *entry;
+	unsigned short rep_count = 0;
+	while((entry = readdir(rep_dir)) && rep_count < max)
+	{
+		if(strcmp(entry->d_name, ".") != 0 || strcmp(entry->d_name, "..") != 0)
+		{
+			char rep_path[MAX_PATH];
+			strcpy_s(rep_path, sizeof(rep_path), dir_path);
+			strcat_s(rep_path, sizeof(rep_path), "\\");
+			strcat_s(rep_path, sizeof(rep_path), entry->d_name);
+
+			struct stat info;
+			FILE *replay = fopen(rep_path, "rb");
+			fstat(fileno(replay), &info);
+			if(info.st_mtime > old_date)
+			{
+				Replay rep = upload_replay(replay, entry->d_name, username);
+				cJSON *replay_obj = get_replay_json(rep);
+				cJSON_AddItemToArray(replay_block, replay_obj);
+			}
+			fclose(replay);
+			rep_count++;
+		}
+	}
+	closedir(rep_dir);
+
+	char *log = NULL;
+	log = cJSON_Print(json);
+	if(log == NULL)
+		perror("\n[JSON] Failure in printing object\n");
+	cJSON_Delete(json);
+
+	return log;
 }

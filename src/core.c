@@ -15,23 +15,6 @@ __declspec(dllexport) check check_files(char replays_path[MAX_PATH])
 	return state;
 }
 
-__declspec(dllexport) void wrt_file_date(char dat_path[MAX_PATH], time_t date)
-{
-	FILE *data_file = fopen(dat_path, "wb");
-	fwrite(&date, sizeof(time_t), 1, data_file);
-	fclose(data_file);
-}
-
-__declspec(dllexport) time_t get_file_date(char dat_path[MAX_PATH])
-{
-	time_t output;
-	FILE *datf = fopen(dat_path, "rb");
-	fread(&output, sizeof(time_t), 1, datf);
-	fclose(datf);
-	
-	return output;
-}
-
 __declspec(dllexport) time_t get_dir_date(char dir_path[MAX_PATH])
 {
 	DIR *repl_dir = opendir(dir_path);
@@ -42,56 +25,10 @@ __declspec(dllexport) time_t get_dir_date(char dir_path[MAX_PATH])
 	return output;
 }
 
-cJSON *get_replay_json(Replay rep)
+__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME])
 {
-	cJSON *replay_object = cJSON_CreateObject();
-	cJSON_AddStringToObject(replay_object, "name", rep.name);
-	cJSON_AddStringToObject(replay_object, "id", rep.id);
-	cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
-	cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
-	cJSON_AddBoolToObject(replay_object, "connection", (cJSON_bool)rep.connection);
-	cJSON_AddStringToObject(replay_object, "parse", rep.parse_rslt);
-
-	return replay_object;
-}
-
-char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME])
-{
-	cJSON *json = cJSON_CreateObject();
-	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
-	DIR *rep_dir = opendir(dir_path);
-	struct dirent *entry;
-	unsigned short rep_count = 0;
-	while((entry = readdir(rep_dir)) && rep_count < max)
-	{
-		if(strcmp(entry->d_name, ".") != 0 || strcmp(entry->d_name, "..") != 0)
-		{
-			char rep_path[MAX_PATH];
-			strcpy_s(rep_path, sizeof(rep_path), dir_path);
-			strcat_s(rep_path, sizeof(rep_path), "\\");
-			strcat_s(rep_path, sizeof(rep_path), entry->d_name);
-
-			struct stat info;
-			FILE *replay = fopen(rep_path, "rb");
-			fstat(fileno(replay), &info);
-			if(info.st_mtime > old_date)
-			{
-				Replay rep = upload_replay(replay, entry->d_name, username);
-				cJSON *replay_obj = get_replay_json(rep);
-				cJSON_AddItemToArray(replay_block, replay_obj);
-			}
-			fclose(replay);
-			rep_count++;
-		}
-	}
-	closedir(rep_dir);
-
-	char *log = NULL;
-	log = cJSON_Print(json);
-	if(log == NULL)
-		perror("\n[JSON] Failure in printing object\n");
-	cJSON_Delete(json);
-
+	char *log = upload_group(MAX_UP, old_date, dir_path, username);
+	
 	return log;
 }
 
@@ -103,13 +40,6 @@ __declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PA
 		return NULL;
 	}
 	char *log = upload_group(n, 0, dir_path, username);
-	
-	return log;
-}
-
-__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME])
-{
-	char *log = upload_group(MAX_UP, old_date, dir_path, username);
 	
 	return log;
 }
@@ -148,3 +78,4 @@ __declspec(dllexport) check debug_mode()
 	
 	return SUCCESS;
 }
+
