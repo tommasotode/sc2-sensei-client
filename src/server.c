@@ -91,7 +91,7 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	// TODO: Add mimetype to the header
 	char rep_name[MAX_PATH + 10] = "replay_name: ";
 	char player_name[MAX_USERNAME + 10] = "username: ";
-	strcat_s(rep_name, sizeof(replay), replay_name);
+	strcat_s(rep_name, sizeof(rep_name), replay_name);
 	strcat_s(player_name, sizeof(player_name), username);
 	struct curl_slist *header = NULL;
 	header = curl_slist_append(header, rep_name);
@@ -142,7 +142,7 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	cJSON_Delete(response_json);
 
 	// Successful update replay
-	strcpy_s(current.id, ID_LEN, replay_id->valuestring);
+	strcpy_s(current.id, sizeof(current.id), replay_id->valuestring);
 	current.upload_date = time(NULL);
 	current.connection = SUCCESS;
 	if(response.size != 0)

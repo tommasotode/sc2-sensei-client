@@ -67,16 +67,14 @@ class Logs(FileHandle):
 		logs = self.get()
 		length = len(logs["Replays"])
 		result = []
-		
 		if quantity > 5 or quantity < 1:
-			print("[ERROR] Invalid number of replays (min. 1 max. 5)")
+			print("[!] Invalid number of replays (min. 1 max. 5)")
 			return None
-		
 		if length == 0:
 			print("No replays in the logs")
 			return None
 		if quantity > length:
-			print(f"[WARNING] Can only get {length} replays")
+			print(f"Can only get {length} replays")
 			for i in range(1, length+1):
 				result.append(logs["Replays"][-i])
 		else:
