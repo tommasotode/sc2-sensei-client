@@ -15,7 +15,7 @@ class Uploader:
 			return None
 		
 		self.log_handle = files.Logs()
-
+		
 		self.core.upload_all_new.restype = c.c_char_p
 		self.core.upload_last_n.restype = c.c_char_p
 		self.core.get_dir_date.restype = c.c_longlong
@@ -33,10 +33,8 @@ class Uploader:
 					json_string = self.core.upload_all_new(c.c_longlong(old_date), c.c_char_p(self.replays_path))
 					self.set_handle.update("LastModifiedDate", new_date)
 					self.log_handle.add_replays(json_string)
-				elif new_date == old_date:
-					print("Ok")
 				else:
-					print("There was an error.")
+					print("Ok")
 
 			time.sleep(5)
 

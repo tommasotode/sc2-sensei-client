@@ -14,13 +14,13 @@
 #define FAILURE 0
 #define MAX_UP 20
 #define ID_LEN 25
-#define MAX_RESPONSE 80
 // TODO: Check max name length in SC2
-#define MAX_NAME 40
+#define MAX_USERNAME 40
+// TODO: Check max parse result length
+#define MAX_PARSE 100
 
 #define UPLOAD_ENDPOINT "localhost:5000/auto_upload"
 #define USERNAME_ENDPOINT "localhost:5000/check_username"
-
 
 typedef unsigned char check;
 typedef struct Replay
@@ -30,7 +30,7 @@ typedef struct Replay
 	time_t play_date;
 	time_t upload_date;
 	check connection;
-	char parse_rslt[100];
+	char parse_rslt[MAX_PARSE];
 } Replay;
 
 struct MemoryStruct
@@ -39,8 +39,8 @@ struct MemoryStruct
 	size_t size;
 };
 
-Replay upload_replay(FILE *replay, char name[MAX_PATH]);
-short check_username(char username[MAX_NAME]);
+Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX_USERNAME]);
+short check_username(char username[MAX_USERNAME]);
 
 // __declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
 // __declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date);

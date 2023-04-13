@@ -62,7 +62,7 @@ cJSON *get_replay_json(Replay rep)
 	return replay_object;
 }
 
-char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
+char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME])
 {
 	cJSON *json = cJSON_CreateObject();
 	cJSON *replay_block = cJSON_AddArrayToObject(json, "Replays");
@@ -74,16 +74,16 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 		if(strcmp(entry->d_name, ".") != 0 || strcmp(entry->d_name, "..") != 0)
 		{
 			char rep_path[MAX_PATH];
-			strcpy_s(rep_path, MAX_PATH, dir_path);
-			strcat_s(rep_path, MAX_PATH, "\\");
-			strcat_s(rep_path, MAX_PATH, entry->d_name);
+			strcpy_s(rep_path, sizeof(rep_path), dir_path);
+			strcat_s(rep_path, sizeof(rep_path), "\\");
+			strcat_s(rep_path, sizeof(rep_path), entry->d_name);
 
 			struct stat info;
 			FILE *replay = fopen(rep_path, "rb");
 			fstat(fileno(replay), &info);
 			if(info.st_mtime > old_date)
 			{
-				Replay rep = upload_replay(replay, entry->d_name);
+				Replay rep = upload_replay(replay, entry->d_name, username);
 				cJSON *replay_obj = get_replay_json(rep);
 				cJSON_AddItemToArray(replay_block, replay_obj);
 			}
@@ -102,21 +102,21 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH])
 	return log;
 }
 
-__declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PATH])
+__declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PATH], char username[MAX_USERNAME])
 {
-	if(n > 20 || n < 1)
+	if(n > MAX_UP || n < 1)
 	{
-		printf("Invalid replay number (VALID 1 - 20)\n");
+		printf("Invalid replay number (VALID 1 - %d)\n", MAX_UP);
 		return NULL;
 	}
-	char *log = upload_group(n, 0, dir_path);
+	char *log = upload_group(n, 0, dir_path, username);
 	
 	return log;
 }
 
-__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH])
+__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME])
 {
-	char *log = upload_group(MAX_UP, old_date, dir_path);
+	char *log = upload_group(MAX_UP, old_date, dir_path, username);
 	
 	return log;
 }
@@ -130,7 +130,7 @@ __declspec(dllexport) check debug_mode()
 	if(mode == 1)
 	{
 		char path[MAX_PATH];
-		char name[MAX_PATH] = "debug_replay";
+		char name[MAX_PATH] = "debug_replay.SC2Replay";
 		FILE *rep;
 		printf("Insert the replay path\n");
 		scanf("%s", path);
@@ -140,7 +140,9 @@ __declspec(dllexport) check debug_mode()
 			fclose(rep);
 			return FAILURE;
 		}
-		Replay result = upload_replay(rep, name);
+		char username[MAX_USERNAME];
+		strcpy_s(username, sizeof(username), "gengiskhan");
+		Replay result = upload_replay(rep, name, username);
 		if(result.connection == FAILURE)
 		{
 			perror("Failed to upload the replay");

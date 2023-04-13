@@ -32,7 +32,7 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 	return realsize;
 }
 
-short check_username(char username[MAX_NAME])
+short check_username(char username[MAX_USERNAME])
 {
 	struct MemoryStruct response;
 	response.memory = malloc(1);
@@ -69,13 +69,13 @@ short check_username(char username[MAX_NAME])
 	return 0;
 }
 
-Replay upload_replay(FILE *replay, char name[MAX_PATH])
+Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX_USERNAME])
 {
 	// Unsuccessful replay initialization
 	Replay current;
-	strcpy_s(current.name, MAX_PATH, name);
-	strcpy_s(current.id, ID_LEN, "");
-	strcpy_s(current.parse_rslt, MAX_RESPONSE, "Connection error");
+	strcpy_s(current.name, sizeof(current.name), replay_name);
+	strcpy_s(current.id, sizeof(current.id), "");
+	strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), "Connection error");
 	struct stat info;
 	fstat(fileno(replay), &info);
 	current.play_date = info.st_mtime;
@@ -88,15 +88,13 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	response.size = 0;
 
 	// Header initialization
-	// TODO: Change this name
 	// TODO: Add mimetype to the header
-	char replay_name[MAX_PATH + 10] = "replay_name: ";
-	char player_name[40] = "username: ";
-	char player_id[] = "gengiskhan";
-	strcat_s(replay_name, sizeof(replay_name), name);
-	strcat_s(player_name, sizeof(player_name), player_id);
+	char rep_name[MAX_PATH + 10] = "replay_name: ";
+	char player_name[MAX_USERNAME + 10] = "username: ";
+	strcat_s(rep_name, sizeof(replay), replay_name);
+	strcat_s(player_name, sizeof(player_name), username);
 	struct curl_slist *header = NULL;
-	header = curl_slist_append(header, replay_name);
+	header = curl_slist_append(header, rep_name);
 	header = curl_slist_append(header, player_name);
 
 	CURL *handle = curl_easy_init();
@@ -148,7 +146,7 @@ Replay upload_replay(FILE *replay, char name[MAX_PATH])
 	current.upload_date = time(NULL);
 	current.connection = SUCCESS;
 	if(response.size != 0)
-		strcpy_s(current.parse_rslt, MAX_RESPONSE, parse->valuestring);
+		strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), parse->valuestring);
 	
 	cleanup:
 	curl_slist_free_all(header);
