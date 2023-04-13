@@ -14,7 +14,13 @@
 #define FAILURE 0
 #define MAX_UP 20
 #define ID_LEN 25
-#define MAX_RESPONSE 80
+// TODO: Check max name length in SC2
+#define MAX_USERNAME 40
+// TODO: Check max parse result length
+#define MAX_PARSE 100
+
+#define UPLOAD_ENDPOINT "localhost:5000/auto_upload"
+#define USERNAME_ENDPOINT "localhost:5000/check_username"
 
 typedef unsigned char check;
 typedef struct Replay
@@ -24,7 +30,7 @@ typedef struct Replay
 	time_t play_date;
 	time_t upload_date;
 	check connection;
-	char parse_rslt[100];
+	char parse_rslt[MAX_PARSE];
 } Replay;
 
 struct MemoryStruct
@@ -33,14 +39,10 @@ struct MemoryStruct
 	size_t size;
 };
 
-// Only exportable  and safe functions
-// (Do not use functions alone if they aren't here)
-__declspec(dllexport) check check_files(char dat_rt[MAX_PATH], char dir_rt[MAX_PATH]);
-__declspec(dllexport) void wrt_file_date(char dat_rt[MAX_PATH], time_t date);
-__declspec(dllexport) time_t get_file_date(char dat_rt[MAX_PATH]);
-__declspec(dllexport) time_t get_dir_date(char dir_rt[MAX_PATH]);
-__declspec(dllexport) char *upload_last_n(unsigned short number, char dir_path[MAX_PATH]);
-__declspec(dllexport) char *upload_all_new(time_t old_date, char dir_path[MAX_PATH]);
-__declspec(dllexport) check debug_mode();
+Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX_USERNAME]);
+char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME]);
+size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
+size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp);
+cJSON *get_replay_json(Replay rep);
 
 #endif

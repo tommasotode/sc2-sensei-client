@@ -6,37 +6,34 @@ import src.files as files
 class Uploader:
 	def __init__(self, replays_path):
 		self.core = c.CDLL(f"{os.getcwd()}/bin/core.so")
-		self.data_path = f"{os.getcwd()}/data/date.dat".encode()
-		self.replays_path = replays_path.encode()
-		if not self.core.check_files(c.c_char_p(self.data_path), c.c_char_p(self.replays_path)):
+		self.set_handle = files.Settings()
+		self.replays_path = replays_path
+		self.username = self.set_handle.get()["Username"]
+		if not self.core.check_files(c.c_char_p(self.replays_path.encode())):
 			print("Aborting")
 			return None
-		
 		self.log_handle = files.Logs()
-		self.set_handle = files.Settings()
+		self.run = False
+
 		self.core.upload_all_new.restype = c.c_char_p
 		self.core.upload_last_n.restype = c.c_char_p
-		self.core.get_file_date.restype = c.c_longlong
 		self.core.get_dir_date.restype = c.c_longlong
 
 	def start_auto_uploader(self):
-		# TODO: Check if there is a better way to make the thread stoppable
 		self.run = True
 		while self.run:
-			if self.set_handle.get()["UploaderState"]:
-
-				old_date = self.core.get_file_date(c.c_char_p(self.data_path))
-				new_date = self.core.get_dir_date(c.c_char_p(self.replays_path))
-
+			settings = self.set_handle.get()
+			if settings["UploaderState"]:
+				old_date = settings["LastModifiedDate"]
+				new_date = self.core.get_dir_date(c.c_char_p(self.replays_path.encode()))
 				if new_date > old_date:
 					print("Directory has been modified\n")
-					json_string = self.core.upload_all_new(c.c_longlong(old_date), c.c_char_p(self.replays_path))
-					self.core.wrt_file_date(c.c_char_p(self.data_path), c.c_longlong(new_date))
+					json_string = self.core.upload_all_new(c.c_longlong(old_date), 
+						c.c_char_p(self.replays_path.encode()), c.c_char_p(self.username.encode()))
+					self.set_handle.update("LastModifiedDate", new_date)
 					self.log_handle.add_replays(json_string)
-				elif new_date == old_date:
-					print("Ok")
 				else:
-					print("There was an error.")
+					print("Ok")
 
 			time.sleep(5)
 
