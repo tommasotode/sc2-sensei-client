@@ -1,6 +1,6 @@
 import customtkinter as ct
 from PIL import Image as img
-from os import getcwd
+import os
 import src.files as files
 import webbrowser
 from tkinter import filedialog
@@ -39,8 +39,8 @@ class App(ct.CTk):
 		if replays_list:
 			for i, replay in enumerate(replays_list[::-1]):
 				link = f"http://localhost:5000/replay_analysis?replay_id={replay['id']}"
-				open_replay = functools.partial(webbrowser.open, url=link)
-				tick = ct.CTkImage(img.open(f"{getcwd()}/img/done.png"), size=(30, 30))
+				open_replay = functools.partial(webbrowser.open, url=link, new=2)
+				tick = ct.CTkImage(img.open(f"{os.getcwd()}/img/done.png"), size=(30, 30))
 				replay_btn = ct.CTkButton(self, text=replay["name"], fg_color="transparent", image=tick,
 					command=open_replay, hover=False, width=400, height=80, font=ct.CTkFont(size=17))
 				replay_btn.grid(row=i+1, column=1)
@@ -56,6 +56,11 @@ class App(ct.CTk):
 		
 		self.set_handle.update("UploaderState", self.uploader_state)
 
+	def open_git_repo(self):
+		webbrowser.open("https://github.com/TommasoTodescato/Sc2SenseiClient", 2)
+
+	def open_parent_dir(self):
+		os.startfile(f"{os.getenv('APPDATA')}\\SC2Sensei")
 
 class AppGUI(App):
 	def __init__(self):
@@ -66,49 +71,50 @@ class AppGUI(App):
 		self.geometry("960x540")
 		self.resizable(False, False)
 		self.title("Sc2SenseiClient")
-		self.iconbitmap(default=f"{getcwd()}/img/logo.ico")
+		self.iconbitmap(default=f"{os.getcwd()}/img/logo.ico")
 
 		self.grid_rowconfigure(0, weight=1)
 		self.grid_rowconfigure((1, 3), weight=10)
 		self.grid_columnconfigure(0, weight=1)
 		self.grid_columnconfigure(1, weight=20)
 
-		# ----	SIDEBAR		----	#
+		# ---- SIDEBAR ---- #
 		self.sidebar = ct.CTkFrame(self, corner_radius=0)
 		self.sidebar.grid(row=0, column=0, rowspan=5, sticky="nsew")
 		self.sidebar.grid_rowconfigure(0, weight=1)
 		self.sidebar.grid_rowconfigure((1, 4), weight=4)
 
-		self.logo_img = ct.CTkImage(img.open(f"{getcwd()}/img/logo.png"), size=(50, 50))
+		self.logo_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/logo.png"), size=(50, 50))
 		self.main_title = ct.CTkLabel(self.sidebar, text=" Sc2Sensei", image=self.logo_img, compound="left",
 			font=ct.CTkFont(size=29, weight="bold"))
 		self.main_title.grid(row=0, column=0, padx=30)
 
-		self.user_img = ct.CTkImage(img.open(f"{getcwd()}/img/user.png"), size=(25, 25))
+		self.user_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/user.png"), size=(25, 25))
 		self.user_button = ct.CTkButton(self.sidebar, image=self.user_img, text="Username", fg_color="transparent",
 			command=self.get_username, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.user_button.grid(row=1, column=0)
 
-		self.dir_img = ct.CTkImage(img.open(f"{getcwd()}/img/dir.png"), size=(25, 25))
+		self.dir_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/dir.png"), size=(25, 25))
 		self.replays_input = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
 			fg_color="transparent", image=self.dir_img, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.replays_input.grid(row=2, column=0)
 		
+		# ---- INFO FRAME ---- #
 		self.info_frame = ct.CTkFrame(self.sidebar, corner_radius=0, fg_color="transparent")
 		self.info_frame.grid(row=5, column=0)
 		self.info_frame.grid_columnconfigure((0,1), weight=1)
 
-		self.source_img = ct.CTkImage(img.open(f"{getcwd()}/img/code.png"), size=(20,20))
+		self.source_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/code.png"), size=(20,20))
 		self.source_btn = ct.CTkButton(self.info_frame, image=self.source_img, text="", fg_color="transparent",
-			hover=False, command=self.get_username, height=40, width=50)
+			hover=False, command=self.open_parent_dir, height=40, width=50)
 		self.source_btn.grid(row=0, column=0, padx=20, pady=(0,10))
 
-		self.git_img = ct.CTkImage(img.open(f"{getcwd()}/img/git.png"), size=(20, 20))
+		self.git_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/git.png"), size=(20, 20))
 		self.git_btn = ct.CTkButton(self.info_frame, image=self.git_img, text="", fg_color="transparent",
-			hover=False, command=self.get_username, height=40, width=50)
+			hover=False, command=self.open_git_repo, height=40, width=50)
 		self.git_btn.grid(row=0, column=1, padx=20, pady=(0,10))
 
-		# ----	UPPERBAR	----	#
+		# ---- UPPERBAR	---- #
 		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=30)
 		self.upperbar.grid(row=0, column=1, columnspan=3, sticky="nsew")
 		self.upperbar.grid_rowconfigure(0, weight=1)
@@ -116,21 +122,23 @@ class AppGUI(App):
 		self.upperbar.grid_columnconfigure(1, weight=8)
 		self.upperbar.grid_columnconfigure(2, weight=1)
 
-		self.welcome = ct.CTkLabel(self.upperbar, height=90, font=ct.CTkFont(size=18), 
-			text=f"Welcome, {self.settings['Username']}")
-		self.welcome.grid(row=0, column=1, padx=10)
 
-		self.play_img = ct.CTkImage(img.open(f"{getcwd()}/img/play.png"), size=(20,20))
-		self.pause_img = ct.CTkImage(img.open(f"{getcwd()}/img/pause.png"), size=(20,20))
+		# TODO: Find a way to center this
+		self.welcome = ct.CTkLabel(self.upperbar, height=90, width=50, font=ct.CTkFont(size=18), 
+			text=f"Welcome, {self.settings['Username']}")
+		self.welcome.grid(row=0, column=1, padx=90)
+
+		self.play_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/play.png"), size=(20,20))
+		self.pause_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/pause.png"), size=(20,20))
 		self.current_state_img = self.pause_img if self.uploader_state else self.play_img
 		self.play_btn = ct.CTkButton(self.upperbar, text="", command=self.toggle_uploader, fg_color="transparent",
 			image=self.current_state_img, hover=False, width=40)
 		self.play_btn.grid(row=0, column=2)
 
-		self.refresh_img = ct.CTkImage(img.open(f"{getcwd()}/img/refresh.png"), size=(20, 20))
+		self.refresh_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/refresh.png"), size=(20, 20))
 		self.refresh_btn = ct.CTkButton(self.upperbar, text="", fg_color="transparent", image=self.refresh_img,
 			hover=False, width=40, height=40, command=lambda:self.set_last_replays(self.log_handle.get_last_replays(3)))
-		self.refresh_btn.grid(row=0, column=0, padx=(0, 10))
+		self.refresh_btn.grid(row=0, column=3, padx=(0, 10))
 
-		# ----	REPLAYS FRAME	----	#
+		# ---- REPLAYS FRAME ---- #
 		self.set_last_replays(self.log_handle.get_last_replays(3))
