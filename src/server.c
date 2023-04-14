@@ -93,16 +93,15 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 		fprintf(stderr, "[!] Curl perform failed: %s\n\n", curl_easy_strerror(res));
 		goto cleanup;
 	}
-	curl_off_t upload_speed, total_time;
-	curl_easy_getinfo(handle, CURLINFO_SPEED_UPLOAD_T, &upload_speed);
-	curl_easy_getinfo(handle, CURLINFO_TOTAL_TIME_T, &total_time);
-
-	fprintf(stderr, "Speed: %lu bytes/sec during %lu.%06lu seconds\n",
-		(unsigned long)upload_speed,
-		(unsigned long)(total_time / 1000000),
-		(unsigned long)(total_time % 1000000));
+	long http_code = 0;
+	curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &http_code);
 	printf("[%luB] - %s\n\n", (unsigned long)response.size, response.memory);
 
+	if(http_code != 200)
+	{
+		printf("\nServer internal failure [HTTP - %ld]\n", http_code);
+		goto cleanup;
+	}
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
 	const cJSON *replay_id = cJSON_GetObjectItem(response_json, "replay_id");
