@@ -41,9 +41,9 @@ class App(ct.CTk):
 				link = f"http://localhost:5000/replay_analysis?replay_id={replay['id']}"
 				open_replay = functools.partial(webbrowser.open, url=link, new=2)
 				tick = ct.CTkImage(img.open(f"{os.getcwd()}/img/done.png"), size=(30, 30))
-				replay_btn = ct.CTkButton(self, text=replay["name"], fg_color="transparent", image=tick,
-					command=open_replay, hover=False, width=400, height=80, font=ct.CTkFont(size=17))
-				replay_btn.grid(row=i+1, column=1)
+				replay_btn = ct.CTkButton(self.replays_frame, text=replay["name"], fg_color="transparent", image=tick,
+					command=open_replay, hover=False, width=400, height=70, font=ct.CTkFont(size=17))
+				replay_btn.grid(row=i+1, pady=30)
 
 	def toggle_uploader(self):
 		# This function doesn't automatically start or stop the uploader
@@ -73,14 +73,14 @@ class AppGUI(App):
 		self.title("Sc2SenseiClient")
 		self.iconbitmap(default=f"{os.getcwd()}/img/logo.ico")
 
-		self.grid_rowconfigure(0, weight=1)
+		self.grid_rowconfigure(0, weight=2)
 		self.grid_rowconfigure((1, 3), weight=10)
-		self.grid_columnconfigure(0, weight=1)
+		self.grid_columnconfigure(0, weight=2)
 		self.grid_columnconfigure(1, weight=20)
 
 		# ---- SIDEBAR ---- #
-		self.sidebar = ct.CTkFrame(self, corner_radius=0)
-		self.sidebar.grid(row=0, column=0, rowspan=5, sticky="nsew")
+		self.sidebar = ct.CTkFrame(self, corner_radius=0, width=200)
+		self.sidebar.grid(row=0, column=0, rowspan=4, sticky="nsew")
 		self.sidebar.grid_rowconfigure(0, weight=1)
 		self.sidebar.grid_rowconfigure((1, 4), weight=4)
 
@@ -115,18 +115,18 @@ class AppGUI(App):
 		self.git_btn.grid(row=0, column=1, padx=20, pady=(0,10))
 
 		# ---- UPPERBAR	---- #
-		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=30)
-		self.upperbar.grid(row=0, column=1, columnspan=3, sticky="nsew")
+		self.upperbar = ct.CTkFrame(self, corner_radius=0, height=100)
+		self.upperbar.grid(row=0, column=1, columnspan=4, sticky="nsew")
 		self.upperbar.grid_rowconfigure(0, weight=1)
-		self.upperbar.grid_columnconfigure(0, weight=1)
+		self.upperbar.grid_columnconfigure(0, weight=16)
 		self.upperbar.grid_columnconfigure(1, weight=8)
 		self.upperbar.grid_columnconfigure(2, weight=1)
 
 
 		# TODO: Find a way to center this
-		self.welcome = ct.CTkLabel(self.upperbar, height=90, width=50, font=ct.CTkFont(size=18), 
+		self.welcome = ct.CTkLabel(self.upperbar, height=100, width=300, font=ct.CTkFont(size=18), 
 			text=f"Welcome, {self.settings['Username']}")
-		self.welcome.grid(row=0, column=1, padx=90)
+		self.welcome.grid(row=0, column=1, padx=50)
 
 		self.play_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/play.png"), size=(20,20))
 		self.pause_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/pause.png"), size=(20,20))
@@ -141,4 +141,8 @@ class AppGUI(App):
 		self.refresh_btn.grid(row=0, column=3, padx=(0, 10))
 
 		# ---- REPLAYS FRAME ---- #
+		self.replays_frame = ct.CTkFrame(self, fg_color="transparent")
+		self.replays_frame.grid(row=1, column=1, sticky="ns")
+		self.replays_frame.grid_rowconfigure(0, weight=1)
+		self.replays_frame.grid_rowconfigure((1, 3), weight=20)
 		self.set_last_replays(self.log_handle.get_last_replays(3))
