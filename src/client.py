@@ -75,7 +75,7 @@ class AppGUI(App):
 
 		self.grid_rowconfigure(0, weight=2)
 		self.grid_rowconfigure((1, 3), weight=10)
-		self.grid_columnconfigure(0, weight=2)
+		self.grid_columnconfigure(0, weight=3)
 		self.grid_columnconfigure(1, weight=20)
 
 		# ---- SIDEBAR ---- #
