@@ -95,7 +95,7 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	}
 	long http_code = 0;
 	curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &http_code);
-	printf("[%luB] - %s\n\n", (unsigned long)response.size, response.memory);
+	printf("[%luB] - %s\n", (unsigned long)response.size, response.memory);
 
 	if(http_code != 200)
 	{
