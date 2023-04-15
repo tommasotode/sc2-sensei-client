@@ -2,6 +2,8 @@
 
 short check_username(char username[MAX_USERNAME])
 {
+	short result = -1;
+	
 	struct MemoryStruct response;
 	response.memory = malloc(1);
 	response.size = 0;
@@ -28,13 +30,29 @@ short check_username(char username[MAX_USERNAME])
 		fprintf(stderr, "[!] Curl perform failed: %s\n", curl_easy_strerror(res));
 		goto cleanup;
 	}
+	long http_code = 0;
+	curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &http_code);
+	if(http_code != 200)
+	{
+		printf("\nServer internal failure [HTTP - %ld]\n", http_code);
+		goto cleanup;
+	}
+	//In the future, the server will also search for similar names
+	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
+	const cJSON *name = cJSON_GetObjectItem(response_json, "result");
+	cJSON_Delete(response_json);
+	if(strcmp(name->valuestring, username)==0)
+		result = 1;
+	else
+		result = 0;
+		
 	cleanup:
 	curl_global_cleanup();
 	curl_easy_cleanup(handle);
 	curl_slist_free_all(header);
 	free(response.memory);
 
-	return 0;
+	return result;
 }
 
 Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX_USERNAME])
@@ -131,7 +149,7 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH],
 	unsigned short rep_count = 0;
 	while((entry = readdir(rep_dir)) && rep_count < max)
 	{
-		if(strcmp(entry->d_name, ".") != 0 || strcmp(entry->d_name, "..") != 0)
+		if(strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
 		{
 			char rep_path[MAX_PATH];
 			strcpy_s(rep_path, sizeof(rep_path), dir_path);
