@@ -3,7 +3,6 @@
 short check_username(char username[MAX_USERNAME])
 {
 	short result = -1;
-	
 	struct MemoryStruct response;
 	response.memory = malloc(1);
 	response.size = 0;
@@ -41,12 +40,9 @@ short check_username(char username[MAX_USERNAME])
 	}
 	//In the future, the server will also search for similar names
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
-	const cJSON *name = cJSON_GetObjectItem(response_json, "result");
+	const cJSON *state = cJSON_GetObjectItem(response_json, "result");
 	cJSON_Delete(response_json);
-	if(strcmp(name->valuestring, username)==0)
-		result = 1;
-	else
-		result = 0;
+	result = state->valueint;
 
 	cleanup:
 	curl_global_cleanup();
