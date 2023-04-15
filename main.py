@@ -5,7 +5,8 @@ import threading
 
 if __name__ == "__main__":
 	app = client.AppGUI()
-	uploader = up.Uploader("C:/repos/Sc2SenseiClient/ReplayTest")
+	settings = files.Settings().get()
+	uploader = up.Uploader(settings["ReplaysDir"])
 	logs = files.Logs()
 	# If the necessary files aren't found
 	if uploader == None:
