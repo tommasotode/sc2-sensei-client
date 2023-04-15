@@ -10,7 +10,9 @@ short check_username(char username[MAX_USERNAME])
 
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	struct curl_slist *header = NULL;
-	header = curl_slist_append(header, username);
+	char name_check[MAX_USERNAME + 10] = "username: ";
+	strcat_s(name_check, sizeof(name_check), username);
+	header = curl_slist_append(header, name_check);
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
@@ -45,7 +47,7 @@ short check_username(char username[MAX_USERNAME])
 		result = 1;
 	else
 		result = 0;
-		
+
 	cleanup:
 	curl_global_cleanup();
 	curl_easy_cleanup(handle);
