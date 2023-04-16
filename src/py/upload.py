@@ -1,7 +1,7 @@
 import os
 import ctypes as c
 import time
-import src.files as files
+import src.py.files as files
 
 class Uploader:
 	def __init__(self):
@@ -10,6 +10,7 @@ class Uploader:
 		self.logs_handle = files.Logs()
 		self.replays_path = self.settings_handle.get()["ReplaysDir"]
 		
+		# TODO: Fix this in the future
 		if not self.core.check_files(c.c_char_p(self.replays_path.encode())) \
 													and self.replays_path != "":
 			print("Aborting")

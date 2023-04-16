@@ -1,7 +1,7 @@
 import customtkinter as ct
 from PIL import Image as img
 import os
-import src.files as files
+import src.py.files as files
 import webbrowser
 from tkinter import filedialog
 import functools

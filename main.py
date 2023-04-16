@@ -1,6 +1,6 @@
-import src.client as client
-import src.upload as up
-import src.files as files
+import src.py.client as client
+import src.py.upload as up
+import src.py.files as files
 import threading
 
 if __name__ == "__main__":
