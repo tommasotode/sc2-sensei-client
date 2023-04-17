@@ -1,10 +1,9 @@
-import src.py.client as client
+import src.py.gui as gui
 import src.py.upload as up
-import src.py.files as files
 import threading
 
 if __name__ == "__main__":
-	app = client.AppGUI()
+	app = gui.Main()
 	uploader = up.Uploader()
 	# If the necessary files aren't found
 	if uploader == None:
