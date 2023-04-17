@@ -44,6 +44,14 @@ __declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PA
 	return log;
 }
 
+
+__declspec(dllexport) short check_username(char username[MAX_USERNAME])
+{
+	short result = check_user(username);
+	
+	return result;
+}
+
 __declspec(dllexport) check debug_mode()
 {
 	short mode;

@@ -8,7 +8,8 @@ class Core:
 		self.lib.get_dir_date.restype = ct.c_longlong
 		self.lib.check_files.restype = ct.c_bool
 		self.lib.debug_mode.restype = ct.c_bool
-	
+		self.lib.check_username.restype = ct.c_short
+
 	def upload_all_new(self, old_date:int, replays_path:str, username:str) -> str:
 		result = self.lib.upload_all_new(ct.c_longlong(old_date),
 			ct.c_char_p(replays_path.encode()), ct.c_char_p(username.encode()))
@@ -29,3 +30,11 @@ class Core:
 		result = self.lib.debug_mode()
 
 		return result
+	
+	def check_username(self, username:str) -> bool:
+		code = self.lib.check_username(ct.c_char_p(username.encode()))
+		if code < 0:
+			print("\nError checking the username")
+			return False
+		return code
+		pass

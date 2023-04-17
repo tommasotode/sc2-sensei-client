@@ -7,14 +7,6 @@ from src.py.core import Core
 from PIL import Image as img
 from tkinter import filedialog
 
-
-# TODO: Should I refactor the structure of the code?
-# Maybe it would be better to use class functions and expand them for the GUI object,
-# so I'm sure that I won't have scope problems
-# Example: toggle_uploader only toggles state, and then i make a wrapper in the AppGUI class
-# that sets the button according to the state
-
-
 class App(ct.CTk):
 	def __init__(self):
 		super().__init__()
@@ -41,6 +33,8 @@ class App(ct.CTk):
 
 		self.last_replays_n = 3
 		self.uploader_state = self.set_handle.get()["UploaderState"]
+		self.valid_username = False
+		self.valid_directory = False
 
 	def get_input(self, text):
 		dialog = ct.CTkInputDialog(text=text, title="")
@@ -53,10 +47,18 @@ class App(ct.CTk):
 		self.set_handle.update("ReplaysDir", folder)
 		return folder
 
-	def get_username(self):
+	def set_username(self):
 		player_name = self.get_input("What's your username?")
 		self.welcome.configure(text="Welcome, " + player_name)
 		self.set_handle.update("Username", player_name)
+		# TODO: Finish name checking
+		self.valid_username = self.core.check_username(player_name)
+		self.set_handle.update("UploaderState", bool(self.valid_username))
+		if not self.valid_username:
+			self.play_btn.configure(image=self.play_img)
+		else:
+			self.play_btn.configure(image=self.pause_img)
+
 		return player_name
 
 	def set_last_replays(self, replays_list):
@@ -88,4 +90,3 @@ class App(ct.CTk):
 
 	def open_parent_dir(self):
 		os.startfile(f"{os.getenv('APPDATA')}\\SC2Sensei")
-

@@ -28,7 +28,7 @@ class Main(App):
 		self.main_title.grid(row=0, column=0, padx=30)
 
 		self.user_button = ct.CTkButton(self.sidebar, image=self.user_img, text="Username", fg_color="transparent",
-			command=self.get_username, hover=False, font=ct.CTkFont(size=14, weight="bold"))
+			command=self.set_username, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.user_button.grid(row=1, column=0)
 
 		self.replays_input = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
@@ -61,6 +61,7 @@ class Main(App):
 			text=f"Welcome, {self.set_handle.get()['Username']}")
 		self.welcome.grid(row=0, column=1, padx=50)
 
+		# This only has effect at the first opening
 		self.current_state_img = self.pause_img if self.uploader_state else self.play_img
 		self.play_btn = ct.CTkButton(self.upperbar, text="", command=self.toggle_uploader, fg_color="transparent",
 			image=self.current_state_img, hover=False, width=40)

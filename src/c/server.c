@@ -1,6 +1,6 @@
 #include "include/core.h"
 
-short check_username(char username[MAX_USERNAME])
+short check_user(char username[MAX_USERNAME])
 {
 	short result = -1;
 	struct MemoryStruct response;
