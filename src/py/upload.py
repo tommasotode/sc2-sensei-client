@@ -18,7 +18,10 @@ class Uploader:
 				username = settings["Username"]
 				rep_path = settings["ReplaysDir"]
 				old_date = settings["LastModifiedDate"]
-				new_date = self.core.get_dir_date(rep_path)
+				if self.core.check_files(rep_path):
+					new_date = self.core.get_dir_date(rep_path)
+				else:
+					new_date = old_date - 1
 				if new_date > old_date:
 					localt = time.strftime('%H:%M:%S', time.localtime())
 					print(f"Directory has been modified at {localt}\n")
