@@ -42,22 +42,20 @@ class App(ct.CTk):
 		input = dialog.get_input()
 		return input
 	
-	def get_replays_dir(self):
+	def set_replays_dir(self):
 		folder = filedialog.askdirectory()
-		self.set_handle.update("ReplaysDir", folder)
+		self.valid_directory = self.core.check_files(folder)
+		if self.valid_directory:
+			self.set_handle.update("ReplaysDir", folder)
+
 		return folder
 
 	def set_username(self):
 		player_name = self.get_input("What's your username?")
-		self.welcome.configure(text="Welcome, " + player_name)
-		self.set_handle.update("Username", player_name)
-		# TODO: Finish name checking
 		self.valid_username = self.core.check_username(player_name)
-		self.set_handle.update("UploaderState", bool(self.valid_username))
-		if not self.valid_username:
-			self.play_btn.configure(image=self.play_img)
-		else:
-			self.play_btn.configure(image=self.pause_img)
+		if self.valid_username:
+			self.welcome.configure(text="Welcome, " + player_name)
+			self.set_handle.update("Username", player_name)
 
 		return player_name
 
@@ -78,7 +76,7 @@ class App(ct.CTk):
 	def toggle_uploader(self):
 		# This function doesn't automatically start or stop the uploader
 		self.uploader_state = not self.uploader_state
-		if self.uploader_state:
+		if self.uploader_state and not self.valid_username and not self.valid_directory:
 			self.play_btn.configure(image=self.pause_img)
 		else:
 			self.play_btn.configure(image=self.play_img)

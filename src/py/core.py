@@ -24,7 +24,7 @@ class Core:
 	def check_files(self, replays_path:str) -> bool:
 		result = self.lib.check_files(ct.c_char_p(replays_path.encode()))
 
-		return result
+		return bool(result)
 	
 	def debug_mode(self) -> bool:
 		result = self.lib.debug_mode()
@@ -36,5 +36,4 @@ class Core:
 		if code < 0:
 			print("\nError checking the username")
 			return False
-		return code
-		pass
+		return bool(code)

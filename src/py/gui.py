@@ -1,13 +1,8 @@
 from src.py.client import App
 import customtkinter as ct
-from PIL import Image as img
 
-
-# I should restructure the way that images get fetched
-# They should be fixed
-
-
-
+# This class only has structural objects, 
+# that get modified from the App class they inherit from
 
 class Main(App):
 	def __init__(self):
@@ -31,7 +26,7 @@ class Main(App):
 			command=self.set_username, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.user_button.grid(row=1, column=0)
 
-		self.replays_input = ct.CTkButton(self.sidebar, text="Replays", command=self.get_replays_dir,
+		self.replays_input = ct.CTkButton(self.sidebar, text="Replays", command=self.set_replays_dir,
 			fg_color="transparent", image=self.dir_img, hover=False, font=ct.CTkFont(size=14, weight="bold"))
 		self.replays_input.grid(row=2, column=0)
 		
@@ -77,6 +72,3 @@ class Main(App):
 		self.replays_frame.grid_rowconfigure(0, weight=1)
 		self.replays_frame.grid_rowconfigure((1, 3), weight=20)
 		self.set_last_replays(self.log_handle.get_last_replays(self.last_replays_n))
-
-
-	
