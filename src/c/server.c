@@ -121,15 +121,26 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
 	const cJSON *replay_id = cJSON_GetObjectItem(response_json, "replay_id");
+	// Apparently, if the string is too long i can't just get it with valuestring
+	// So, i need to get the string value like this
+	char r[MAX_PARSE];
+	strcpy_s(r, sizeof(r), cJSON_GetStringValue(parse));	
 	cJSON_Delete(response_json);
 
 	// Successful update replay
-	strcpy_s(current.id, sizeof(current.id), replay_id->valuestring);
 	current.upload_date = time(NULL);
 	current.connection = SUCCESS;
-	if(response.size != 0)
-		strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), parse->valuestring);
-	
+
+	// TODO: Maybe in the future I will need to change this (I don't think so)
+	if(is_utf8(replay_id->valuestring) && is_utf8(r))
+	{
+		strcpy_s(current.id, sizeof(current.id), replay_id->valuestring);
+		strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), r);
+	}else
+	{
+		strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), "Error decoding response");
+	}
+
 	cleanup:
 	curl_slist_free_all(header);
 	curl_easy_cleanup(handle);
