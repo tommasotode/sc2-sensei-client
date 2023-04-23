@@ -6,8 +6,6 @@ if __name__ == "__main__":
 	app = gui.Main()
 	uploader = up.Uploader()
 	# If the necessary files aren't found
-	if uploader == None:
-		exit()
 
 	up_thread = threading.Thread(target=uploader.start_auto_uploader)
 	up_thread.start()
