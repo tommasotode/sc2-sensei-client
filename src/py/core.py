@@ -1,5 +1,6 @@
 import ctypes as ct
 import os
+import json
 
 class Core:
 	def __init__(self):
@@ -26,17 +27,17 @@ class Core:
 
 		return int(result)
 	
-	def upload_all_new(self, old_date:int, replays_path:str, username:str) -> str:
+	def upload_all_new(self, old_date:int, replays_path:str, username:str) -> dict:
 		result = self.lib.upload_all_new(ct.c_longlong(old_date),
 			ct.c_char_p(replays_path.encode()), ct.c_char_p(username.encode()))
 		
-		return str(result)
+		return json.loads(result)
 	
-	def upload_last_n(self, number:int, replays_path:str, username:str) -> str:
+	def upload_last_n(self, number:int, replays_path:str, username:str) -> dict:
 		result = self.lib.upload_last_n(ct.c_ushort(number), 
 			ct.c_char_p(replays_path.encode()), ct.c_char_p(username.encode()))
 		
-		return str(result)
+		return json.loads(result)
 	
 	def debug_mode(self) -> bool:
 		result = self.lib.debug_mode()

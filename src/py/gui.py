@@ -51,7 +51,6 @@ class Main(App):
 		self.upperbar.grid_columnconfigure(1, weight=8)
 		self.upperbar.grid_columnconfigure(2, weight=1)
 
-
 		self.welcome = ct.CTkLabel(self.upperbar, height=100, width=300, font=ct.CTkFont(size=18), 
 			text=f"Welcome, {self.set_handle.get()['Username']}")
 		self.welcome.grid(row=0, column=1, padx=50)
@@ -67,7 +66,7 @@ class Main(App):
 		self.refresh_btn.grid(row=0, column=3, padx=(0, 10))
 
 		# ---- REPLAYS FRAME ---- #
-		self.replays_frame = ct.CTkFrame(self, fg_color="transparent")
+		self.replays_frame = ct.CTkFrame(self, corner_radius=0, fg_color="transparent")
 		self.replays_frame.grid(row=1, column=1, sticky="ns")
 		self.replays_frame.grid_rowconfigure(0, weight=1)
 		self.replays_frame.grid_rowconfigure((1, 3), weight=20)
