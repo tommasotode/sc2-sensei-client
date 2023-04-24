@@ -25,7 +25,7 @@ class App(ct.CTk):
 		self.play_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/play.png"), size=(20,20))
 		self.pause_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/pause.png"), size=(20,20))
 		self.refresh_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/refresh.png"), size=(20, 20))
-		self.tick = ct.CTkImage(img.open(f"{os.getcwd()}/img/done.png"), size=(30, 30))
+		self.tick_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/done.png"), size=(30, 30))
 
 		self.core = Core()
 		self.set_handle = files.Settings()
@@ -66,7 +66,7 @@ class App(ct.CTk):
 			link = f"http://localhost:5000/replay_analysis?replay_id={replay['id']}"
 			open_replay = functools.partial(webbrowser.open, url=link, new=2)
 			replay_btn = ct.CTkButton(self.replays_frame, text=replay["name"], fg_color="transparent", 
-			    image=self.tick, command=open_replay, hover=False, width=400, height=70, font=ct.CTkFont(size=17))
+			    image=self.tick_img, command=open_replay, hover=False, width=400, height=70, font=ct.CTkFont(size=17))
 			replay_btn.grid(row=i+1, pady=30)
 
 	def refresh(self):
@@ -76,7 +76,7 @@ class App(ct.CTk):
 	def toggle_uploader(self):
 		# This function doesn't automatically start or stop the uploader
 		self.uploader_state = not self.uploader_state
-		if self.uploader_state and not self.valid_username and not self.valid_directory:
+		if self.uploader_state:
 			self.play_btn.configure(image=self.pause_img)
 		else:
 			self.play_btn.configure(image=self.play_img)

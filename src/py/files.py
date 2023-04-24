@@ -33,7 +33,7 @@ class Settings(FileHandle):
 			sample = {}
 			sample["Username"] = ""
 			sample["ReplaysDir"] = ""
-			sample["UploaderState"] = True
+			sample["UploaderState"] = False
 			sample["LastModifiedDate"] = int(time())
 			with open(self.path, "w") as file:
 				json.dump(sample, file, indent=2)
@@ -57,12 +57,12 @@ class Logs(FileHandle):
 				json.dump(sample, file, indent=2)
 
 	def add_replays(self, log_string):
-		old_log = self.get()
+		log = self.get()
 		new_log = json.loads(log_string)
 		for replay in new_log["Replays"]:
-			old_log["Replays"].append(replay)
+			log["Replays"].append(replay)
 		with open(self.path, "w") as file:
-			json.dump(old_log, file, indent=2)
+			json.dump(log, file, indent=2)
 
 	def get_last_replays(self, quantity=3):
 		logs = self.get()

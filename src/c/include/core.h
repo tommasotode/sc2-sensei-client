@@ -44,7 +44,7 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH],
 size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
 size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp);
 cJSON *get_replay_json(Replay rep);
-short check_user(char username[MAX_USERNAME]);
+check check_user(char username[MAX_USERNAME]);
 check is_utf8(char *string);
 
 #endif

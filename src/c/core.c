@@ -1,6 +1,5 @@
 #include "include/core.h"
 
-// TODO: Make a function to create them if they're not found
 __declspec(dllexport) check check_files(char replays_path[MAX_PATH])
 {
 	check state = SUCCESS;
@@ -13,6 +12,13 @@ __declspec(dllexport) check check_files(char replays_path[MAX_PATH])
 	closedir(dircheck);
 	
 	return state;
+}
+
+__declspec(dllexport) check check_username(char username[MAX_USERNAME])
+{
+	check result = check_user(username);
+	
+	return result;
 }
 
 __declspec(dllexport) time_t get_dir_date(char dir_path[MAX_PATH])
@@ -42,14 +48,6 @@ __declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PA
 	char *log = upload_group(n, 0, dir_path, username);
 	
 	return log;
-}
-
-
-__declspec(dllexport) short check_username(char username[MAX_USERNAME])
-{
-	short result = check_user(username);
-	
-	return result;
 }
 
 __declspec(dllexport) check debug_mode()
@@ -86,4 +84,3 @@ __declspec(dllexport) check debug_mode()
 	
 	return SUCCESS;
 }
-

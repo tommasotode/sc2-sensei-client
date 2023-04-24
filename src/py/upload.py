@@ -7,7 +7,6 @@ class Uploader:
 		self.core = Core()
 		self.settings_handle = files.Settings()
 		self.logs_handle = files.Logs()
-		self.replays_path = self.settings_handle.get()["ReplaysDir"]
 
 	def start_auto_uploader(self):
 		self.run = True
