@@ -1,8 +1,8 @@
 #include "include/core.h"
 
-short check_user(char username[MAX_USERNAME])
+check check_user(char username[MAX_USERNAME])
 {
-	short result = -1;
+	check result = FAILURE;
 	struct MemoryStruct response;
 	response.memory = malloc(1);
 	response.size = 0;
