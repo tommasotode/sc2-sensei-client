@@ -24,9 +24,9 @@ class Uploader:
 				if new_date > old_date:
 					localt = time.strftime('%H:%M:%S', time.localtime())
 					print(f"Directory has been modified at {localt}\n")
-					json_string = self.core.upload_all_new(old_date, rep_path, username)
+					log = self.core.upload_all_new(old_date, rep_path, username)
 					self.settings_handle.update("LastModifiedDate", new_date)
-					self.logs_handle.add_replays(json_string)
+					self.logs_handle.add_replays(log)
 				else:
 					print("Ok")
 			time.sleep(5)

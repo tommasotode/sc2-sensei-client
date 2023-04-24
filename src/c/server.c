@@ -120,12 +120,14 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	}
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *parse = cJSON_GetObjectItem(response_json, "parse");
-	const cJSON *replay_id = cJSON_GetObjectItem(response_json, "replay_id");
+	const cJSON *rep_id = cJSON_GetObjectItem(response_json, "replay_id");
 	
 	// Apparently, if the string is too long i can't just get it with valuestring
 	// So, i need to get the string value like this
-	char r[MAX_PARSE];
-	strcpy_s(r, sizeof(r), cJSON_GetStringValue(parse));	
+	char parse_rslt[MAX_PARSE];
+	char replay_id[ID_LEN];
+	strcpy_s(parse_rslt, sizeof(parse_rslt), cJSON_GetStringValue(parse));
+	strcpy_s(replay_id, sizeof(replay_id), cJSON_GetStringValue(rep_id));
 	cJSON_Delete(response_json);
 
 	// Successful update replay
@@ -133,10 +135,10 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	current.connection = SUCCESS;
 
 	// TODO: Maybe in the future I will need to change this (I don't think so)
-	if(is_utf8(r))
+	if(is_utf8(parse_rslt) && is_utf8(replay_id))
 	{
-		strcpy_s(current.id, sizeof(current.id), replay_id->valuestring);
-		strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), r);
+		strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), parse_rslt);
+		strcpy_s(current.id, sizeof(current.id), replay_id);
 	}else
 	{
 		strcpy_s(current.parse_rslt, sizeof(current.parse_rslt), "Error decoding response");
