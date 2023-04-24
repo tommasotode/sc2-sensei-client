@@ -1,1 +1,0 @@
-# TODO: Implement an autoupdater script, which will then be the launcher for the main program
