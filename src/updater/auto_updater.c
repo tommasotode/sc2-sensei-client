@@ -1,7 +1,8 @@
 #include "auto_updater.h"
 
-int main(void)
+int main()
 {
+	printf("Updating...\n");
 	curl_global_init(CURL_GLOBAL_ALL);
 	CURL *handle = curl_easy_init();
 	if(!handle)
@@ -10,11 +11,14 @@ int main(void)
 		goto cleanup;
 	}
 	FILE *outfile;
-	outfile = fopen("myfile.txt", "wb");
+	outfile = fopen("temp.zip", "wb");
 	
+	// Just for now we are gonna pretend that there will always be an update
+
 	curl_easy_setopt(handle, CURLOPT_URL, UPDATE_ENDPOINT);
 	curl_easy_setopt(handle, CURLOPT_WRITEDATA, outfile);
 	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
+	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
 	CURLcode res = curl_easy_perform(handle);
 	
 	fclose(outfile);

@@ -38,7 +38,7 @@ check check_user(char username[MAX_USERNAME])
 		printf("\nServer internal failure [HTTP - %ld]\n", http_code);
 		goto cleanup;
 	}
-	//In the future, the server will also search for similar names
+	// TODO: In the future, the server will also search for similar names
 	cJSON *response_json = cJSON_ParseWithLength(response.memory, response.size);
 	const cJSON *state = cJSON_GetObjectItem(response_json, "result");
 	cJSON_Delete(response_json);

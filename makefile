@@ -6,3 +6,6 @@ dev:
 
 	cc -shared -o bin/core.so bin/core.o bin/server.o bin/utils.o bin/cJSON.o -L lib/curl -lcurl
 	del bin\core.o bin\server.o bin\utils.o bin\cJSON.o
+
+updater:
+	cc -Wall src/updater/auto_updater.c -o bin/updater.exe -I src/updater/include -L lib/curl -lcurl

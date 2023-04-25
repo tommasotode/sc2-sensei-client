@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <curl/curl.h>
-#include <cJSON.h>
 
 #define UPDATE_ENDPOINT "localhost:5000/client_update"
 
