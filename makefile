@@ -9,3 +9,9 @@ dev:
 
 updater:
 	cc -Wall src/updater/auto_updater.c -o bin/updater.exe -I src/updater/include -L lib/curl -lcurl
+
+prova:
+	cc -Wall -c src/updater/replacer.c -o bin/replacer.o
+	cc -Wall -c src/updater/zip.c -o bin/zip.o -I src/updater/include
+
+	cc -o bin/a.exe bin/replacer.o bin/zip.o
