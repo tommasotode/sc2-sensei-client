@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <curl/curl.h>
+#include <zip.h>
 
 #define UPDATE_ENDPOINT "localhost:5000/client_update"
 
