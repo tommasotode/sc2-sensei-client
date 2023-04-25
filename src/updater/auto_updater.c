@@ -2,8 +2,8 @@
 
 int main()
 {
-	printf("Updating...\n");
-	curl_global_init(CURL_GLOBAL_ALL);
+	printf("Updating...\n\n");
+	curl_global_init(CURL_GLOBAL_DEFAULT);
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
@@ -36,8 +36,9 @@ int main()
 	}
 
 	cleanup:
-	curl_easy_cleanup(handle);
 	curl_global_cleanup();
+	curl_easy_cleanup(handle);
+
 
 	return 0;
 }

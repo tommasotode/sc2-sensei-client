@@ -81,6 +81,7 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	header = curl_slist_append(header, rep_name);
 	header = curl_slist_append(header, player_name);
 
+	curl_global_init(CURL_GLOBAL_DEFAULT);
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
@@ -145,8 +146,9 @@ Replay upload_replay(FILE *replay, char replay_name[MAX_PATH], char username[MAX
 	}
 
 	cleanup:
-	curl_slist_free_all(header);
+	curl_global_cleanup();
 	curl_easy_cleanup(handle);
+	curl_slist_free_all(header);
 	free(response.memory);
 	
 	return current;
