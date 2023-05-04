@@ -7,7 +7,7 @@ block_cipher = None
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=[],
+    binaries=[('D:/Git_Repositories/Sc2SenseiClient/bin/core.so', '.')],
     datas=[('d:/git_repositories/sc2senseiclient/.venv/lib/site-packages/customtkinter', 'customtkinter/')],
     hiddenimports=[],
     hookspath=[],
