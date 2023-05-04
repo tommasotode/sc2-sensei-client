@@ -11,7 +11,7 @@ if __name__ == "__main__":
 	# If the necessary files aren't found
 
 	up_thread = threading.Thread(target=uploader.start_auto_uploader)
-	up_thread.setDaemon(True)
+	up_thread.daemon = True
 	up_thread.start()
 
 	# Must be in the main thread
