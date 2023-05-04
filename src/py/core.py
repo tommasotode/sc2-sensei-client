@@ -2,6 +2,8 @@ import ctypes as ct
 import os
 import json
 
+ct.windll.kernel32.SetDllDirectoryW(None)
+
 class Core:
 	def __init__(self):
 		self.lib = ct.CDLL(f"{os.getcwd()}/bin/core.so")
