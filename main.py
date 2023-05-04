@@ -10,7 +10,7 @@ if __name__ == "__main__":
 	# in that case, return without doing anything
 
 	# reference 
-	"main??.exe" in (i.name() for i in psutil.process_iter())
+	#####  "main??.exe" in (i.name() for i in psutil.process_iter())
 	# Considera di rinominare main.py in sc2senseiclient.py
 	# credo diventi il nome del processo nel task manager
 
