@@ -39,7 +39,6 @@ int main()
 	curl_global_cleanup();
 	curl_easy_cleanup(handle);
 
-
 	return 0;
 }
 

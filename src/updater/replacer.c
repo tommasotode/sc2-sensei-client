@@ -10,7 +10,6 @@ int on_extract_entry(const char *filename, void *arg)
 	return 0;
 }
 
-
 int main()
 {
 	int arg = 215;

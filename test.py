@@ -1,5 +1,5 @@
-import src.upload as up
-import src.files as files
+import src.py.upload as up
+import src.py.files as files
 
 if __name__ == "__main__":
 	set_handle = files.Settings()
