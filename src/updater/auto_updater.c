@@ -7,7 +7,7 @@ int main()
 	CURL *handle = curl_easy_init();
 	if(!handle)
 	{
-		perror("\n[!] Curl init failed\n");	
+		perror("\n[!] Curl init failed\n");
 		goto cleanup;
 	}
 	FILE *outfile;
