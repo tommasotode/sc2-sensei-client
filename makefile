@@ -14,4 +14,4 @@ prova:
 	cc -Wall -c src/updater/replacer.c -o bin/replacer.o
 	cc -Wall -c src/updater/zip.c -o bin/zip.o -I src/updater/include
 
-	cc -o bin/a.exe bin/replacer.o bin/zip.o
+	cc -o bin/extractor.exe bin/replacer.o bin/zip.o
