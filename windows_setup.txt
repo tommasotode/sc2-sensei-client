@@ -1,0 +1,13 @@
+Needed tools for windows compiling:
+	
+	- MSYS2 (mingw-w64)
+	> needed packages:
+		> gcc
+		> base-devel
+		> development
+		> mingw-w64-x86_64-toolchain
+		> mingw-w64-x86_64-curl
+	
+	- GNU Make
+
+( Remember to add <X>:\msys64\mingw64\bin to the env variables )
