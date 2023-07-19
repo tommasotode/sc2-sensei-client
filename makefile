@@ -4,7 +4,7 @@ dev:
 	cc -Wall -fPIC -c src/c/utils.c -o bin/utils.o -I src/c/include
 	cc -fPIC -c src/c/cJSON.c -o bin/cJSON.o -I src/c/include
 
-	cc -shared -o bin/core.so bin/core.o bin/server.o bin/utils.o bin/cJSON.o -L lib/curl -lcurl
+	cc -shared -o bin/core.so bin/core.o bin/server.o bin/utils.o bin/cJSON.o -lcurl
 	del bin\core.o bin\server.o bin\utils.o bin\cJSON.o
 
 updater:

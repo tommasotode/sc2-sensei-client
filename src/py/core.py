@@ -13,29 +13,36 @@ class Core:
 		self.lib.debug_mode.restype = ct.c_bool
 
 	def check_files(self, replays_path:str) -> bool:
-		result = self.lib.check_files(ct.c_char_p(replays_path.encode()))
+		replays_path = ct.c_char_p(replays_path.encode())
+		result = self.lib.check_files(replays_path)
 
 		return bool(result)
 
 	def check_username(self, username:str) -> bool:
-		code = self.lib.check_username(ct.c_char_p(username.encode()))
+		username = ct.c_char_p(username.encode())
+		code = self.lib.check_username(username)
 		
 		return bool(code)
 
 	def get_dir_date(self, replays_path:str) -> int:
-		result = self.lib.get_dir_date(ct.c_char_p(replays_path.encode()))
+		replays_path = ct.c_char_p(replays_path.encode())
+		result = self.lib.get_dir_date(replays_path)
 
 		return int(result)
 	
 	def upload_all_new(self, old_date:int, replays_path:str, username:str) -> dict:
-		result = self.lib.upload_all_new(ct.c_longlong(old_date),
-			ct.c_char_p(replays_path.encode()), ct.c_char_p(username.encode()))
+		old_date = ct.c_longlong(old_date)
+		replays_path = ct.c_char_p(replays_path.encode())
+		username = ct.c_char_p(username.encode())
+		result = self.lib.upload_all_new(old_date, replays_path, username)
 		
 		return json.loads(result)
 	
-	def upload_last_n(self, number:int, replays_path:str, username:str) -> dict:
-		result = self.lib.upload_last_n(ct.c_ushort(number), 
-			ct.c_char_p(replays_path.encode()), ct.c_char_p(username.encode()))
+	def upload_last_n(self, n:int, replays_path:str, username:str) -> dict:
+		n = ct.c_ushort(n)
+		replays_path = ct.c_char_p(replays_path.encode())
+		username = ct.c_char_p(username.encode())
+		result = self.lib.upload_last_n(n, replays_path, username)
 		
 		return json.loads(result)
 	
