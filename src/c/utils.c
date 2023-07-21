@@ -17,17 +17,17 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 	// create memory block and put contents in it
 	
 	size_t realsize = size * nmemb;
-	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
-	char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+	Response *mem = (Response *)userp;
+	char *ptr = realloc(mem->text, mem->size + realsize + 1);
 	if(!ptr)
 	{
 		perror("Not enough memory");
 		return 0;
 	}
-	mem->memory = ptr;
-	memcpy(&(mem->memory[mem->size]), contents, realsize);
+	mem->text = ptr;
+	memcpy(&(mem->text[mem->size]), contents, realsize);
 	mem->size = mem->size + realsize;
-	mem->memory[mem->size] = 0;
+	mem->text[mem->size] = 0;
 
 	return realsize;
 }
@@ -40,15 +40,16 @@ cJSON *get_replay_json(Replay rep)
 	cJSON_AddNumberToObject(replay_object, "play_date", rep.play_date);
 	cJSON_AddNumberToObject(replay_object, "upload_date", rep.upload_date);
 	cJSON_AddBoolToObject(replay_object, "connection", (cJSON_bool)rep.connection);
-	cJSON_AddStringToObject(replay_object, "parse", rep.parse_rslt);
+	cJSON_AddStringToObject(replay_object, "parse", rep.parse_result);
 
 	return replay_object;
 }
 
-check is_utf8(char *string)
+
+bool is_utf8(char *string)
 {
 	if(!string)
-		return FAILURE;
+		return false;
 
 	const unsigned char * bytes = (const unsigned char *)string;
 	while(*bytes)
@@ -118,8 +119,8 @@ check is_utf8(char *string)
 			bytes += 4;
 			continue;
 		}
-		return FAILURE;
+		return false;
 	}
 	
-	return SUCCESS;
+	return true;
 }

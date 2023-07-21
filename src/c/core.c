@@ -1,22 +1,22 @@
 #include "include/core.h"
 
-__declspec(dllexport) check check_files(char replays_path[MAX_PATH])
+__declspec(dllexport) bool check_files(char replays_path[MAX_PATH])
 {
-	check state = SUCCESS;
-	DIR *dircheck;
-	if(!(dircheck = opendir(replays_path)))
+	bool result = true;
+	DIR *dir;
+	if(!(dir = opendir(replays_path)))
 	{
 		perror("[!] Unable to open replays directory");
-		state = FAILURE;
+		result = false;
 	}
-	closedir(dircheck);
+	closedir(dir);
 	
-	return state;
+	return result;
 }
 
-__declspec(dllexport) check check_username(char username[MAX_USERNAME])
+__declspec(dllexport) bool check_username(char username[MAX_USERNAME])
 {
-	check result = check_user(username);
+	bool result = check_user(username);
 	
 	return result;
 }
@@ -50,7 +50,7 @@ __declspec(dllexport) char *upload_last_n(unsigned short n, char dir_path[MAX_PA
 	return log;
 }
 
-__declspec(dllexport) check debug_mode()
+__declspec(dllexport) bool debug_mode()
 {
 	short mode;
 	printf("DEBUG MODE\n\n");
@@ -63,24 +63,26 @@ __declspec(dllexport) check debug_mode()
 		FILE *rep;
 		printf("Insert the replay path\n");
 		scanf("%s", path);
+		
 		if(!(rep = fopen(path, "rb")))
 		{
 			perror("Failed to open the replay");
 			fclose(rep);
-			return FAILURE;
+			return false;
 		}
 		char username[MAX_USERNAME];
 		strcpy_s(username, sizeof(username), "gengiskhan");
 		Replay result = upload_replay(rep, name, username);
-		if(result.connection == FAILURE)
+		
+		if(result.connection == false)
 		{
 			perror("Failed to upload the replay");
 			fclose(rep);
-			return FAILURE;
+			return false;
 		}
-		printf("%s", result.parse_rslt);
+		printf("%s", result.parse_result);
 		fclose(rep);
 	}	
 	
-	return SUCCESS;
+	return true;
 }
