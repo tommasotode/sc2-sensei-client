@@ -20,6 +20,9 @@
 // TODO: Check max parse result length
 #define MAX_PARSE 100
 
+// TODO: Find a realistic number for this
+#define MAX_REPLAY_NAME 60
+
 #define UPLOAD_ENDPOINT "localhost:5000/auto_upload"
 #define USERNAME_ENDPOINT "localhost:5000/check_username"
 
@@ -31,6 +34,7 @@ typedef struct Replay
 
 typedef struct ReplayLog
 {
+	char path[MAX_PATH];
 	char id[ID_LEN];
 	time_t play_date;
 	time_t upload_date;
