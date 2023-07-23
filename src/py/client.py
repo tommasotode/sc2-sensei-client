@@ -54,9 +54,12 @@ class App(ct.CTk):
 		player_name = self.get_input("What's your username?")
 		self.valid_username = self.core.check_username(player_name)
 		if self.valid_username:
+			print("\nValid username!\n")
 			self.welcome.configure(text="Welcome, " + player_name)
 			self.set_handle.update("Username", player_name)
-
+		else:
+			print("\nUsername is NOT valid!\n")
+			
 		return player_name
 
 	def set_last_replays(self, replays_list):

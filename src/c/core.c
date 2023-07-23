@@ -59,7 +59,6 @@ __declspec(dllexport) bool debug_mode()
 	if(mode == 1)
 	{
 		char path[MAX_PATH];
-		char name[MAX_PATH] = "debug_replay.SC2Replay";
 		FILE *rep;
 		printf("Insert the replay path\n");
 		scanf("%s", path);
@@ -72,7 +71,11 @@ __declspec(dllexport) bool debug_mode()
 		}
 		char username[MAX_USERNAME];
 		strcpy_s(username, sizeof(username), "gengiskhan");
-		Replay result = upload_replay(rep, name, username);
+		
+		Replay uploaded;
+		strcpy_s(uploaded.path, sizeof(uploaded.path), path);
+		strcpy_s(uploaded.username, sizeof(uploaded.username), username);
+		ReplayLog result = upload(uploaded);
 		
 		if(result.connection == false)
 		{
