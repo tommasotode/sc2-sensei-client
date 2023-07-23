@@ -8,18 +8,18 @@ size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 	size_t retcode = fread(ptr, size, nmemb, readhere);
 	curl_off_t nread = (curl_off_t)retcode;
 	printf("[CURL] %lli bytes read\n", nread);
-	
+
 	return retcode;
 }
 
 size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 {
 	// create memory block and put contents in it
-	
+
 	size_t realsize = size * nmemb;
 	Response *mem = (Response *)userp;
 	char *ptr = realloc(mem->text, mem->size + realsize + 1);
-	if(!ptr)
+	if (!ptr)
 	{
 		perror("Not enough memory");
 		return 0;
@@ -32,28 +32,14 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 	return realsize;
 }
 
-cJSON *get_log_json(ReplayLog log)
-{
-	cJSON *replay_object = cJSON_CreateObject();
-	cJSON_AddStringToObject(replay_object, "path", log.path);
-	cJSON_AddStringToObject(replay_object, "id", log.id);
-	cJSON_AddNumberToObject(replay_object, "play_date", log.play_date);
-	cJSON_AddNumberToObject(replay_object, "upload_date", log.upload_date);
-	cJSON_AddBoolToObject(replay_object, "connection", (cJSON_bool)log.connection);
-	cJSON_AddStringToObject(replay_object, "parse", log.parse_result);
-
-	return replay_object;
-}
-
-ReplayLog parse(Response data, char rep_path[MAX_PATH])
+ReplayLog parse_response(Response data, char rep_path[MAX_PATH])
 {
 	struct stat info;
 	stat(rep_path, &info);
-	
-	ReplayLog log = { .upload_date = time(NULL), .play_date = info.st_mtime, .connection = true };
+	ReplayLog log = {.upload_date = time(NULL), .play_date = info.st_mtime, .connection = true};
 	strcpy_s(log.path, sizeof(log.path), rep_path);
 
-	if(data.size == 0)
+	if (data.size == 0)
 	{
 		log.connection = false;
 		free(data.text);
@@ -63,14 +49,12 @@ ReplayLog parse(Response data, char rep_path[MAX_PATH])
 	cJSON *log_json = cJSON_ParseWithLength(data.text, data.size);
 	const cJSON *parse = cJSON_GetObjectItem(log_json, "parse");
 	const cJSON *rep_id = cJSON_GetObjectItem(log_json, "replay_id");
-	
-	// Apparently, if the string is too long i can't just get it with valuestring
-	// So, i need to get the string value like this
+
 	strcpy_s(log.parse_result, sizeof(log.parse_result), cJSON_GetStringValue(parse));
 	strcpy_s(log.id, sizeof(log.id), cJSON_GetStringValue(rep_id));
-	
+
 	// TODO: Maybe in the future I will need to change this (I don't think so)
-	if(!is_utf8(log.parse_result) || !is_utf8(log.id))
+	if (!is_utf8(log.parse_result) || !is_utf8(log.id))
 	{
 		strcpy_s(log.parse_result, sizeof(log.parse_result), "Decoding failure");
 		strcpy_s(log.id, sizeof(log.id), "");
@@ -80,6 +64,19 @@ ReplayLog parse(Response data, char rep_path[MAX_PATH])
 	free(data.text);
 
 	return log;
+}
+
+cJSON *get_log_json(ReplayLog log)
+{
+	cJSON *log_json = cJSON_CreateObject();
+	cJSON_AddStringToObject(log_json, "path", log.path);
+	cJSON_AddStringToObject(log_json, "id", log.id);
+	cJSON_AddNumberToObject(log_json, "play_date", log.play_date);
+	cJSON_AddNumberToObject(log_json, "upload_date", log.upload_date);
+	cJSON_AddBoolToObject(log_json, "connection", (cJSON_bool)log.connection);
+	cJSON_AddStringToObject(log_json, "parse", log.parse_result);
+
+	return log_json;
 }
 
 bool is_utf8(char *string)

@@ -4,17 +4,17 @@ bool check_user(char username[MAX_USERNAME])
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	bool isValid = false;
-	Response response = { .text = malloc(1), .size = 0 };
-	
+	Response response = {.text = malloc(1), .size = 0};
+
 	char name_check[MAX_USERNAME + 10] = "username: ";
 	strcat_s(name_check, sizeof(name_check), username);
 	struct curl_slist *header = NULL;
 	header = curl_slist_append(header, name_check);
-	
+
 	CURL *handle = curl_easy_init();
-	if(!handle)
+	if (!handle)
 	{
-		perror("\n[!] Curl init failed\n");	
+		perror("\n[!] Curl init failed\n");
 		goto cleanup;
 	}
 
@@ -24,9 +24,9 @@ bool check_user(char username[MAX_USERNAME])
 	curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&response);
 	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, header);
 	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
-	
+
 	CURLcode res = curl_easy_perform(handle);
-	if(res != CURLE_OK)
+	if (res != CURLE_OK)
 	{
 		fprintf(stderr, "[!] Curl perform failed: %s\n", curl_easy_strerror(res));
 		goto cleanup;
@@ -34,12 +34,12 @@ bool check_user(char username[MAX_USERNAME])
 
 	long http_code = 0;
 	curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &http_code);
-	if(http_code != 200)
+	if (http_code != 200)
 	{
 		printf("\n[!] HTTP failure - %ld\n", http_code);
 		goto cleanup;
 	}
-	
+
 	// TODO: In the future, the server will also search for similar names
 	cJSON *response_json = cJSON_ParseWithLength(response.text, response.size);
 	const cJSON *state = cJSON_GetObjectItem(response_json, "result");
@@ -47,10 +47,10 @@ bool check_user(char username[MAX_USERNAME])
 	isValid = state->valueint;
 
 	cleanup:
-	curl_global_cleanup();
-	curl_slist_free_all(header);
-	curl_easy_cleanup(handle);
-	free(response.text);
+		curl_global_cleanup();
+		curl_slist_free_all(header);
+		curl_easy_cleanup(handle);
+		free(response.text);
 
 	return isValid;
 }
@@ -59,16 +59,16 @@ bool check_user(char username[MAX_USERNAME])
 ReplayLog upload(Replay replay)
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
-	Response response = { .size = 0, .text = malloc(1) };
+	Response response = {.size = 0, .text = malloc(1)};
 	CURL *handle = curl_easy_init();
-	if(!handle)
+	if (!handle)
 	{
 		perror("\n[!] Curl init failed\n");
 		curl_global_cleanup();
 		curl_easy_cleanup(handle);
-		return parse(response, replay.path);
+		return parse_response(response, replay.path);
 	}
-	
+
 	// File and file descriptor
 	FILE *data = fopen(replay.path, "rb");
 	struct stat info;
@@ -97,7 +97,7 @@ ReplayLog upload(Replay replay)
 
 	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
 	CURLcode res = curl_easy_perform(handle);
-	if(res != CURLE_OK)
+	if (res != CURLE_OK)
 	{
 		fprintf(stderr, "[!] Curl perform failed: %s\n\n", curl_easy_strerror(res));
 		free(response.text);
@@ -107,7 +107,7 @@ ReplayLog upload(Replay replay)
 
 	long http_code = 0;
 	curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &http_code);
-	if(http_code != 200)
+	if (http_code != 200)
 	{
 		printf("\n[!] HTTP failure - %ld\n", http_code);
 		free(response.text);
@@ -119,7 +119,7 @@ ReplayLog upload(Replay replay)
 	curl_slist_free_all(header);
 	fclose(data);
 
-	return parse(response, replay.path);
+	return parse_response(response, replay.path);
 }
 
 char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME])
@@ -129,9 +129,9 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH],
 	DIR *rep_dir = opendir(dir_path);
 	struct dirent *entry;
 	short rep_count = 0;
-	while((entry = readdir(rep_dir)) && rep_count < max)
+	while ((entry = readdir(rep_dir)) && rep_count < max)
 	{
-		if(strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
+		if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
 		{
 			char rep_path[MAX_PATH];
 			strcpy_s(rep_path, sizeof(rep_path), dir_path);
@@ -140,7 +140,7 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH],
 
 			struct stat info;
 			stat(rep_path, &info);
-			if(info.st_mtime > old_date)
+			if (info.st_mtime > old_date)
 			{
 				Replay uploaded;
 				strcpy_s(uploaded.path, sizeof(uploaded.path), rep_path);
@@ -154,9 +154,9 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH],
 	}
 	char *log_raw = NULL;
 	log_raw = cJSON_Print(log_json);
-	if(log_raw == NULL)
+	if (log_raw == NULL)
 		perror("\n[JSON] Failure in printing object\n");
-	
+
 	cJSON_Delete(log_json);
 	closedir(rep_dir);
 
