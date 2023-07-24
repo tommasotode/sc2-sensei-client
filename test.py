@@ -1,4 +1,4 @@
-import src.py.upload as up
+import py.uploader as up
 import src.py.files as files
 
 if __name__ == "__main__":

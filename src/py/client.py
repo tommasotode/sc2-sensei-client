@@ -1,11 +1,13 @@
-import customtkinter as ct
 import os
-import src.py.files as files
+import customtkinter as ct
 import webbrowser
 import functools
-from src.py.core import Core
 from PIL import Image as img
 from tkinter import filedialog
+
+from src.py.core import Core
+from src.py.settings import	Settings
+from src.py.logs import Logs
 
 class App(ct.CTk):
 	def __init__(self):
@@ -28,8 +30,8 @@ class App(ct.CTk):
 		self.tick_img = ct.CTkImage(img.open(f"{os.getcwd()}/img/done.png"), size=(30, 30))
 
 		self.core = Core()
-		self.set_handle = files.Settings()
-		self.log_handle = files.Logs()
+		self.set_handle = Settings()
+		self.log_handle = Logs()
 
 		self.last_replays_n = 3
 		self.uploader_state = self.set_handle.get()["UploaderState"]
@@ -68,7 +70,7 @@ class App(ct.CTk):
 		for i, replay in enumerate(replays_list[::-1]):
 			link = f"http://localhost:5000/replay_analysis?replay_id={replay['id']}"
 			open_replay = functools.partial(webbrowser.open, url=link, new=2)
-			replay_btn = ct.CTkButton(self.replays_frame, text=replay["name"], fg_color="transparent", 
+			replay_btn = ct.CTkButton(self.replays_frame, text=replay["path"], fg_color="transparent", 
 			    image=self.tick_img, command=open_replay, hover=False, width=400, height=70, font=ct.CTkFont(size=17))
 			replay_btn.grid(row=i+1, pady=30)
 

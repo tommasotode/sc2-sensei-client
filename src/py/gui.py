@@ -1,5 +1,6 @@
-from src.py.client import App
 import customtkinter as ct
+
+from src.py.client import App
 
 # This class only has structural objects, 
 # that get modified from the App class they inherit from

@@ -135,7 +135,7 @@ char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH],
 		{
 			char rep_path[MAX_PATH];
 			strcpy_s(rep_path, sizeof(rep_path), dir_path);
-			strcat_s(rep_path, sizeof(rep_path), "\\");
+			strcat_s(rep_path, sizeof(rep_path), "/");
 			strcat_s(rep_path, sizeof(rep_path), entry->d_name);
 
 			struct stat info;

@@ -1,6 +1,6 @@
-import ctypes as ct
 import os
 import json
+import ctypes as ct
 
 class Core:
 	def __init__(self):
