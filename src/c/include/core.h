@@ -4,10 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <dirent.h>
-#include <string.h>
-#include <sys/stat.h>
 #include <time.h>
+#include <dirent.h>
+#include <sys/stat.h>
 #include <curl/curl.h>
 #include <cJSON.h>
 
@@ -48,13 +47,16 @@ typedef struct Response
 	size_t size;
 } Response;
 
-ReplayLog upload(Replay replay);
-char *upload_group(unsigned short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME]);
 size_t read_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
 size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp);
-cJSON *get_log_json(ReplayLog log);
+
+ReplayLog upload_replay(char path[MAX_PATH], char username[MAX_USERNAME]);
 ReplayLog parse_response(Response data, char rep_path[MAX_PATH]);
+char *upload(short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME]);
 bool check_user(char username[MAX_USERNAME]);
+
+cJSON *get_log_json(ReplayLog log);
+char *get_raw_log(cJSON *log);
 bool is_utf8(char *string);
 
 #endif
