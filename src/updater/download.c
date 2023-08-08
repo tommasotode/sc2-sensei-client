@@ -1,6 +1,6 @@
-#include "include/auto_updater.h"
+#include <auto_updater.h>
 
-int main()
+int download()
 {
 	printf("Updating...\n\n");
 	curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -27,11 +27,12 @@ int main()
 		fprintf(stderr, "[!] Curl perform failed: %s\n", curl_easy_strerror(res));
 		goto cleanup;
 	}
+	
 	long http_code = 0;
 	curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE, &http_code);
 	if(http_code != 200)
 	{
-		printf("\nServer internal failure [HTTP - %ld]\n", http_code);
+		printf("\n[!] HTTP failure - %ld\n", http_code);
 		goto cleanup;
 	}
 

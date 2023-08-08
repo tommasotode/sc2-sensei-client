@@ -10,11 +10,13 @@ dev:
 
 	del bin\*.o
 
-updater:
-	cc -Wall src/updater/auto_updater.c -o bin/updater.exe -I src/updater/include -L lib/curl -lcurl
+test_download:
+	cc -Wall src/updater/download.c -o bin/download.exe -I src/updater/include -lcurl
 
-prova:
-	cc -Wall -c src/updater/replacer.c -o bin/replacer.o
+test_extract:
+	cc -Wall -c src/updater/extract.c -o bin/extract.o -I src/updater/include
 	cc -Wall -c src/updater/zip.c -o bin/zip.o -I src/updater/include
 
-	cc -o bin/extractor.exe bin/replacer.o bin/zip.o
+	cc -o bin/extract.exe bin/extract.o bin/zip.o
+
+	del bin\*.o
