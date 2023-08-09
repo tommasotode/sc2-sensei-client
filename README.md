@@ -4,7 +4,7 @@ A windows client that automatically uploads replays to [SC2Sensei](https://sc2se
 ## GUI
 The user interface is meant to be simple and to just have what is strictly needed.
 The front-end of the client is completely autonomous from the actual auto-uploader, and it isn't necessary to keep the GUI open for it to work.
-The uploader will be displayed on the system tray, and will be automatically startep on windows boot, so you won't need to think about it.
+The uploader will be displayed on the system tray, and will be automatically started on windows boot, so you won't need to think about it.
 
 ## Updates
 Updates are completely automatized, as soon as a new release gets uploaded to GitHub, the client will automatically update without any interruption needed.
