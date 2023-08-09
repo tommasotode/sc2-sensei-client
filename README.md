@@ -25,7 +25,7 @@ To build the project from source, you will need:
       - base-devel
       - development
       - mingw-w64-x86_64-toolchain
-      - mingw-w64-x86_64-curl
+      - mingw-w64-x86_64-curl-winssl
   - GNU make
   - Python 3.11.0
 
