@@ -1,5 +1,5 @@
-import py.uploader as up
-import src.py.files as files
+import src.client.uploader as up
+import src.client.files as files
 
 if __name__ == "__main__":
 	set_handle = files.Settings()

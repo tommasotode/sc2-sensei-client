@@ -5,11 +5,11 @@ import functools
 from PIL import Image as img
 from tkinter import filedialog
 
-from src.py.core import Core
-from src.py.settings import	Settings
-from src.py.logs import Logs
+from src.client.core import Core
+from src.client.settings import	Settings
+from src.client.logs import Logs
 
-class App(ct.CTk):
+class Client(ct.CTk):
 	def __init__(self):
 		super().__init__()
 		ct.set_appearance_mode("dark")
@@ -79,7 +79,6 @@ class App(ct.CTk):
 		self.set_last_replays(replays_list)
 
 	def toggle_uploader(self):
-		# This function doesn't automatically start or stop the uploader
 		self.uploader_state = not self.uploader_state
 		if self.uploader_state:
 			self.play_btn.configure(image=self.pause_img)

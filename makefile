@@ -1,13 +1,20 @@
+CC=gcc
+SRC=src/uploader
+INCLUDE=${SRC}/include
+BIN=bin
+
+CFLAGS=-Wall -fPIC
+LIB=-lcurl
+
 dev:
-	cc -Wall -fPIC -c src/c/core.c -o			bin/core.o		-I src/c/include
-	cc -Wall -fPIC -c src/c/misc/logs.c -o		bin/logs.o		-I src/c/include
-	cc -Wall -fPIC -c src/c/misc/utils.c -o		bin/utils.o		-I src/c/include
-	cc -Wall -fPIC -c src/c/misc/cJSON.c -o		bin/cJSON.o		-I src/c/include
-	cc -Wall -fPIC -c src/c/server/upload.c -o	bin/upload.o	-I src/c/include
-	cc -Wall -fPIC -c src/c/server/users.c -o	bin/users.o		-I src/c/include
+	${CC} ${CFLAGS} -I ${INCLUDE} -c ${SRC}/core.c			-o	${BIN}/core.o
+	${CC} ${CFLAGS} -I ${INCLUDE} -c ${SRC}/misc/logs.c		-o	${BIN}/logs.o
+	${CC} ${CFLAGS} -I ${INCLUDE} -c ${SRC}/misc/utils.c	-o	${BIN}/utils.o
+	${CC} ${CFLAGS} -I ${INCLUDE} -c ${SRC}/misc/cJSON.c	-o	${BIN}/cJSON.o
+	${CC} ${CFLAGS} -I ${INCLUDE} -c ${SRC}/server/upload.c	-o	${BIN}/upload.o
+	${CC} ${CFLAGS} -I ${INCLUDE} -c ${SRC}/server/users.c	-o	${BIN}/users.o
 
-	cc -shared -o bin/core.so bin/core.o bin/logs.o bin/utils.o bin/cJSON.o bin/upload.o bin/users.o -lcurl
-
+	${CC} -shared ${BIN}/core.o ${BIN}/logs.o ${BIN}/utils.o ${BIN}/cJSON.o ${BIN}/upload.o ${BIN}/users.o -o ${BIN}/core.so ${LIB}
 	del bin\*.o
 
 test_download:

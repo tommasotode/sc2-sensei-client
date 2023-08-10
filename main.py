@@ -1,7 +1,7 @@
 import threading
 
-import src.py.gui as gui
-import src.py.uploader as up
+import src.client.gui as gui
+import src.client.uploader as up
 
 if __name__ == "__main__":
 	app = gui.Main()

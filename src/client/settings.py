@@ -2,7 +2,7 @@ import os
 import json
 from time import time
 
-from src.py.files import FileHandle
+from src.client.files import FileHandle
 
 class Settings(FileHandle):
 	def __init__(self):

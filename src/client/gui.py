@@ -1,11 +1,11 @@
 import customtkinter as ct
 
-from src.py.client import App
+from src.client.client import Client
 
 # This class only has structural objects, 
-# that get modified from the App class they inherit from
+# that get modified from the Client class they inherit from
 
-class Main(App):
+class Main(Client):
 	def __init__(self):
 		super().__init__()
 		self.grid_rowconfigure(0, weight=2)

@@ -1,7 +1,7 @@
 import os
 import json
 
-from src.py.files import FileHandle
+from src.client.files import FileHandle
 
 class Logs(FileHandle):
 	def __init__(self):

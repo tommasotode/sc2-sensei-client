@@ -1,8 +1,8 @@
 import time
 
-from src.py.settings import Settings
-from src.py.logs import Logs
-from src.py.core import Core
+from src.client.settings import Settings
+from src.client.logs import Logs
+from src.client.core import Core
 
 class Uploader:
 	def __init__(self):
@@ -16,8 +16,6 @@ class Uploader:
 			settings = self.settings_handle.get()
 			up_state = settings["UploaderState"]
 
-			# TODO: up_state is now completely dependent on settings, it can't be changed in any way
-			# maybe it would be better to make some functions to handle it so it becomes more easy
 			if up_state:
 				username = settings["Username"]
 				old_date = settings["LastModifiedDate"]
