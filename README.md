@@ -1,6 +1,6 @@
 # Sc2SenseiClient
 
-A windows client that automatically uploads replays to [SC2Sensei](https://sc2sensei.top/), as soon as you finish playing.
+A windows client that automatically uploads replays to [SC2Sensei](https://github.com/OranBar/sc2-sensei.git), as soon as you finish playing.
 
 ## GUI
 
@@ -10,8 +10,8 @@ The uploader will be displayed on the system tray, and will be automatically sta
 
 ## Updates
 
-Updates are completely automatized, as soon as a new release gets uploaded to GitHub, the client will automatically update without any interruption needed.
-If you want to see the release notes, you can still get to the [latest release page](https://github.com/TommasoTodescato/SC2SenseiClient/releases/latest/) to see it.
+Updates are completely automatized, as soon as a new release gets uploaded to GitHub, the client will be automatically updated without any interruption needed.
+If you want to see the release notes, you can still get to the [latest release page](https://github.com/TommasoTodescato/SC2SenseiClient/releases/latest/).
 
 ## Download
 
