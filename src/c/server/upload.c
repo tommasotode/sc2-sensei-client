@@ -30,7 +30,6 @@ ReplayLog upload_replay(char path[MAX_PATH], char username[MAX_USERNAME])
 	// Set upload information and replay to read
 	curl_easy_setopt(handle, CURLOPT_URL, UPLOAD_ENDPOINT);
 	curl_easy_setopt(handle, CURLOPT_UPLOAD, 1L);
-	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(handle, CURLOPT_READDATA, data);
 	curl_easy_setopt(handle, CURLOPT_READFUNCTION, read_callback);
 	curl_easy_setopt(handle, CURLOPT_INFILESIZE_LARGE, (curl_off_t)info.st_size);
