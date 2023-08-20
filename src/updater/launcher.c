@@ -1,4 +1,4 @@
-#include <auto_updater.h>
+#include <updater.h>
 
 
 #include <sys/types.h>
@@ -20,31 +20,29 @@ int main()
     		mkdir("tmp");
 		}
 
-		char link[] = "https://github.com/TommasoTodescato/SC2SenseiClient/releases/latest/download/main.zip";
-		char dir[] = "tmp";
+		char archive[MAX_PATH] = "tmp/temp.zip";
+		char dir[MAX_PATH] = "tmp";
 
-		download(link, dir);
-
-		char archive[] = "tmp/main.zip";
+		download_update(archive);
 
 		extract(archive, dir);
 		remove(archive);
 
-		int files_count = 10;
-		for(int i=0; i < files_count; i++)
-		{
-			remove("filename");
+		//int files_count = 10;
+		//for(int i=0; i < files_count; i++)
+		//{
+		//	remove("filename");
 
-			move("from ./tmp/filename to ./filename");
-		}
+		//	move("from ./tmp/filename to ./filename");
+		//}
 
-		remove("tmp");
-
+		//remove("tmp");
 	}
+
 	char *args[]={"./client.exe",NULL};
 	execvp(args[0],args);
 
-	printf("Failure");
+	printf("\nFailure running client");
 
 	return 0;
 }

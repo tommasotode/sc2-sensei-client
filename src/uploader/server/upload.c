@@ -58,9 +58,9 @@ ReplayLog upload_replay(char path[MAX_PATH], char username[MAX_USERNAME])
 		response.size = 0;
 		response.text = NULL;
 	}
-	curl_global_cleanup();
 	curl_easy_cleanup(handle);
 	curl_slist_free_all(header);
+	curl_global_cleanup();
 	fclose(data);
 
 	return parse_response(response, path);

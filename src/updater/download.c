@@ -1,6 +1,8 @@
-#include <auto_updater.h>
+#include <updater.h>
 
-bool download()
+
+// TODO: Add verification to save path
+bool download_update(char save_path[MAX_PATH])
 {
 	bool result = true;
 	printf("Downloading update...\n\n");
@@ -13,14 +15,14 @@ bool download()
 		goto cleanup;
 	}
 	FILE *outfile;
-	outfile = fopen("temp.zip", "wb");
+	outfile = fopen(save_path, "wb");
 
 	curl_easy_setopt(handle, CURLOPT_URL, UPDATE_ENDPOINT);
 	curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(handle, CURLOPT_WRITEDATA, outfile);
 	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
 
-	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
+	//curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
 	CURLcode res = curl_easy_perform(handle);
 
 	fclose(outfile);
@@ -40,9 +42,9 @@ bool download()
 		goto cleanup;
 	}
 
-	cleanup:
-		curl_global_cleanup();
-		curl_easy_cleanup(handle);
+cleanup:
+	curl_easy_cleanup(handle);
+	curl_global_cleanup();
 
 	return result;
 }

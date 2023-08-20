@@ -47,9 +47,9 @@ bool check_user(char username[MAX_USERNAME])
 	isValid = state->valueint;
 
 cleanup:
-	curl_global_cleanup();
 	curl_slist_free_all(header);
 	curl_easy_cleanup(handle);
+	curl_global_cleanup();
 	free(response.text);
 
 	return isValid;
