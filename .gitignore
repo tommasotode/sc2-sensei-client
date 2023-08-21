@@ -1,6 +1,9 @@
 .venv
 .vscode
 __pycache__
+build
+dist
+*.spec
 *.so
 *.o
 *.exe
