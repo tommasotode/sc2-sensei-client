@@ -8,21 +8,39 @@
 
 // LAUNCHER PROTOTYPE
 
-#define update true
+#include <stdio.h>
+
+// the build script will create a directory with the zip and the release in
 
 int main()
 {
+	bool update = false;
+	
+	struct stat st;
+	if(stat("tmp", &st) == -1)
+	{
+    	mkdir("tmp");
+	}
+
+	download_release();
+
+	char old_path[MAX_PATH] = "release";
+	char new_path[MAX_PATH] = "tmp/release";
+	char old_content[100], new_content[100];
+	FILE *old_release = fopen(old_path, "rb");
+	FILE *new_release = fopen(new_path, "rb");
+
+	fread(old_content, 1, sizeof(old_content), old_release);
+	fread(new_content, 1, sizeof(new_content), new_release);
+
+	if (strcmp(old_content, new_content) != 0)
+		update = true;
+
 	if(update)
 	{
-		struct stat st;
-		if(stat("tmp", &st) == -1)
-		{
-    		mkdir("tmp");
-		}
-
 		char archive[MAX_PATH] = "tmp/temp.zip";
 		char dir[MAX_PATH] = "tmp";
-
+		
 		download_update(archive);
 
 		extract(archive, dir);
@@ -46,4 +64,3 @@ int main()
 
 	return 0;
 }
-
