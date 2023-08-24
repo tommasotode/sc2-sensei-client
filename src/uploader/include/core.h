@@ -11,10 +11,12 @@
 #include <cJSON.h>
 
 #define MAX_UP 20
-#define ID_LEN 25
+#define REPLAY_ID_LEN 32
 
 // TODO: Check max name length in SC2
 #define MAX_USERNAME 40
+#define MAX_PASSWORD 64
+#define USER_ID_LEN 32
 
 // TODO: Check max parse result length
 #define MAX_PARSE 100
@@ -23,7 +25,7 @@
 #define MAX_REPLAY_NAME 60
 
 #define UPLOAD_ENDPOINT "localhost:5000/auto_upload"
-#define USERNAME_ENDPOINT "localhost:5000/check_username"
+#define USERNAME_ENDPOINT "localhost:5000/check_user"
 
 typedef struct Replay
 {
@@ -34,7 +36,7 @@ typedef struct Replay
 typedef struct ReplayLog
 {
 	char path[MAX_PATH];
-	char id[ID_LEN];
+	char id[REPLAY_ID_LEN];
 	time_t play_date;
 	time_t upload_date;
 	bool connection;
@@ -53,7 +55,7 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp);
 ReplayLog upload_replay(char path[MAX_PATH], char username[MAX_USERNAME]);
 ReplayLog parse_response(Response data, char rep_path[MAX_PATH]);
 char *upload(short max, time_t old_date, char dir_path[MAX_PATH], char username[MAX_USERNAME]);
-bool check_user(char username[MAX_USERNAME]);
+char *check_valid_user(char username[MAX_USERNAME], char password[MAX_PASSWORD]);
 
 cJSON *get_log_json(ReplayLog log);
 char *get_raw_log(cJSON *log);

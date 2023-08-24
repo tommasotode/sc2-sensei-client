@@ -54,7 +54,7 @@ class Client(ct.CTk):
 
 	def set_username(self):
 		player_name = self.get_input("What's your username?")
-		self.valid_username = self.core.check_username(player_name)
+		self.valid_username = self.core.check_user(player_name, "zergOP")
 		if self.valid_username:
 			print("\nValid username!\n")
 			self.welcome.configure(text="Welcome, " + player_name)

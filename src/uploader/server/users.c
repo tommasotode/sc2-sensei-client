@@ -1,15 +1,10 @@
 #include <core.h>
 
-bool check_user(char username[MAX_USERNAME])
+char *check_valid_user(char username[MAX_USERNAME], char password[MAX_PASSWORD])
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	bool isValid = false;
 	Response response = {.text = malloc(1), .size = 0};
-
-	char name_check[MAX_USERNAME + 10] = "username: ";
-	strcat_s(name_check, sizeof(name_check), username);
-	struct curl_slist *header = NULL;
-	header = curl_slist_append(header, name_check);
 
 	CURL *handle = curl_easy_init();
 	if (!handle)
@@ -19,10 +14,13 @@ bool check_user(char username[MAX_USERNAME])
 	}
 
 	curl_easy_setopt(handle, CURLOPT_URL, USERNAME_ENDPOINT);
-	curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
+
+	char request_content[MAX_USERNAME+MAX_PASSWORD+30];
+	sprintf(request_content, "user=%s&pass=%s", username, password);
+    curl_easy_setopt(handle, CURLOPT_POSTFIELDS, request_content);
+
 	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(handle, CURLOPT_WRITEDATA, (void *)&response);
-	curl_easy_setopt(handle, CURLOPT_HTTPHEADER, header);
 	curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L);
 
 	CURLcode res = curl_easy_perform(handle);
@@ -46,11 +44,17 @@ bool check_user(char username[MAX_USERNAME])
 	cJSON_Delete(response_json);
 	isValid = state->valueint;
 
+	char *id;
+	if(isValid)
+	{
+		const cJSON *user_id = cJSON_GetObjectItem(response_json, "user_id");
+		id = strdup(cJSON_GetStringValue(user_id));
+	}
+
 cleanup:
-	curl_slist_free_all(header);
 	curl_easy_cleanup(handle);
 	curl_global_cleanup();
 	free(response.text);
 
-	return isValid;
+	return id;
 }

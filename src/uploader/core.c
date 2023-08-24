@@ -17,9 +17,9 @@ __declspec(dllexport) bool check_files(char replays_path[MAX_PATH])
 	return result;
 }
 
-__declspec(dllexport) bool check_username(char username[MAX_USERNAME])
+__declspec(dllexport) char *check_user(char username[MAX_USERNAME], char password[MAX_PASSWORD])
 {
-	bool result = check_user(username);
+	char *result = check_valid_user(username, password);
 
 	return result;
 }

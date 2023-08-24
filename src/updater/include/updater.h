@@ -8,9 +8,11 @@
 #include <curl/curl.h>
 #include <zip.h>
 
-#define RELEASE_URL "https://github.com/TommasoTodescato/Sc2SenseiClient/releases/latest/download/test.zip"
+#define RELEASE_URL "https://github.com/TommasoTodescato/Sc2SenseiClient/releases/latest/download/release"
 #define UPDATE_URL "https://github.com/TommasoTodescato/Sc2SenseiClient/releases/latest/download/test.zip"
-#define URL_LEN
+
+// completely arbitrary length
+#define URL_LEN 256
 
 bool download_update(char save_path[MAX_PATH]);
 size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream);
