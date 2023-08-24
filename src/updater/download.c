@@ -1,8 +1,9 @@
 #include <updater.h>
 
-
 // TODO: Add verification to save path
-bool download_update(char save_path[MAX_PATH])
+
+// NOTE: Link length is arbitrary
+bool download_update(char save_path[MAX_PATH], char url[URL_LEN])
 {
 	bool result = true;
 	printf("Downloading update...\n\n");
@@ -48,6 +49,7 @@ cleanup:
 
 	return result;
 }
+
 
 size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
 {
