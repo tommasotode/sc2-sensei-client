@@ -18,7 +18,7 @@ bool download_update(char save_path[MAX_PATH], char url[URL_LEN])
 	FILE *outfile;
 	outfile = fopen(save_path, "wb");
 
-	curl_easy_setopt(handle, CURLOPT_URL, UPDATE_ENDPOINT);
+	curl_easy_setopt(handle, CURLOPT_URL, url);
 	curl_easy_setopt(handle, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(handle, CURLOPT_WRITEDATA, outfile);
 	curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_callback);

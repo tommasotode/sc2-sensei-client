@@ -14,7 +14,7 @@
 // completely arbitrary length
 #define URL_LEN 256
 
-bool download_update(char save_path[MAX_PATH]);
+bool download_update(char save_path[MAX_PATH], char url[URL_LEN]);
 size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream);
 bool extract(char archive_path[MAX_PATH], char destination_path[MAX_PATH]);
 #endif
